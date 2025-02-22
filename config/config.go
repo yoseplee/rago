@@ -16,7 +16,7 @@ func init() {
 
 	Config = config{
 		Profile: viper.GetString("profile"),
-		openAI: openAI{
+		OpenAI: openAI{
 			ApiKey:     viper.GetString("openai.api-key"),
 			MaxRetries: viper.GetInt("openai.max-retries"),
 		},
@@ -25,10 +25,18 @@ func init() {
 
 type config struct {
 	Profile string
-	openAI
+	OpenAI  openAI
 }
 
 type openAI struct {
 	ApiKey     string
 	MaxRetries int
+	Models     openAIModels
 }
+
+type openAIModels struct {
+	Completion []openAIModel
+	Embedding  []openAIModel
+}
+
+type openAIModel struct{}
