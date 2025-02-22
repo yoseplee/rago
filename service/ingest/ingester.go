@@ -1,4 +1,4 @@
-package ingester
+package ingest
 
 import (
 	"github.com/yoseplee/rago/models"

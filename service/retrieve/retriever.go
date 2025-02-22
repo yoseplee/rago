@@ -1,4 +1,4 @@
-package retriever
+package retrieve
 
 import (
 	"github.com/yoseplee/rago/models"
