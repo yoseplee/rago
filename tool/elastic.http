@@ -1,0 +1,90 @@
+### Health Check
+GET {{elastic-host}}/_cluster/health?pretty
+Content-Type: application/json
+
+### Perform a Vector Search
+POST {{elastic-host}}/{{index}}/_search
+Content-Type: application/json
+
+{
+  "knn": {
+    "field": "embedding",
+    "query_vector": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+    "k": 5,
+    "num_candidates": 10
+  }
+}
+
+
+### Delete Index
+DELETE {{elastic-host}}/{{index}}
+Content-Type: application/json
+
+
+### Create Index
+PUT {{elastic-host}}/{{index}}
+Content-Type: application/json
+
+{
+  "mappings": {
+    "properties": {
+      "text": {
+        "type": "text"
+      },
+      "embedding": {
+        "type": "dense_vector",
+        "dims": 10,
+        "index": true,
+        "similarity": "cosine"
+      }
+    }
+  }
+}
+
+
+### Index Documents with Embeddings #1
+POST {{elastic-host}}/{{index}}/_doc/1
+Content-Type: application/json
+
+{
+  "text": "hello world",
+  "embedding": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+}
+
+### Index Documents with Embeddings #2
+POST {{elastic-host}}/{{index}}/_doc/2
+Content-Type: application/json
+
+{
+  "text": "new world",
+  "embedding": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1]
+}
+
+### Index Documents with Embeddings #3
+POST {{elastic-host}}/{{index}}/_doc/1
+Content-Type: application/json
+
+{
+  "text": "whole world",
+  "embedding": [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+}
+
+### Index Documents with Embeddings #4
+POST {{elastic-host}}/{{index}}/_doc/1
+Content-Type: application/json
+
+{
+  "text": "kitten",
+  "embedding": [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
+}
+
+### Index Documents with Embeddings #5
+POST {{elastic-host}}/{{index}}/_doc/1
+Content-Type: application/json
+
+{
+  "text": "dog walker",
+  "embedding": [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
+}
+
+
