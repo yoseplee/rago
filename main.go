@@ -4,12 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/openai/openai-go"
+	. "github.com/yoseplee/rago/infra"
 )
 
 func main() {
-	client := NewClient()
-
-	if chatCompletion, err := client.OpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+	if chatCompletion, err := OpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage("Describe who you are."),
 		}),

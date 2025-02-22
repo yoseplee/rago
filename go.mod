@@ -1,4 +1,4 @@
-module rago
+module "github.com/yoseplee/rago"
 
 go 1.24.0
 
