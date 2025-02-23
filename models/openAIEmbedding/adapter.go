@@ -1,5 +1,5 @@
 package openAIEmbedding
 
 type Adapter interface {
-	GenerateEmbedding(document string) (error, Embedding)
+	GenerateEmbedding(document string) (Embedding, error)
 }
