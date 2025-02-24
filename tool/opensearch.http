@@ -1,0 +1,112 @@
+### Health Check
+GET {{opensearch-host}}/_cluster/health
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+
+
+### Perform a Vector Seaech
+POST {{opensearch-host}}/{{index}}/_search
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "size": 3,
+  "query": {
+    "knn": {
+      "embedding": {
+        "vector": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+        "k": 3
+      }
+    }
+  }
+}
+
+
+### Delete Index
+DELETE {{opensearch-host}}/{{index}}
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+
+### Create Index
+PUT {{opensearch-host}}/{{index}}
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "settings": {
+    "index": {
+      "knn": true,
+      "knn.algo_param.ef_search": 100
+    }
+  },
+  "mappings": {
+    "properties": {
+      "embedding": {
+        "type": "knn_vector",
+        "dimension": 10,
+        "method": {
+          "name": "hnsw",
+          "space_type": "l2",
+          "engine": "nmslib",
+          "parameters": {
+            "ef_construction": 100,
+            "m": 16
+          }
+        }
+      }
+    }
+  }
+}
+
+
+### Index Documents with Embeddings #1
+POST {{opensearch-host}}/{{index}}/_doc/
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "text": "hello world",
+  "embedding": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+}
+
+### Index Documents with Embeddings #2
+POST {{opensearch-host}}/{{index}}/_doc
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "text": "new world",
+  "embedding": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1]
+}
+
+### Index Documents with Embeddings #3
+POST {{opensearch-host}}/{{index}}/_doc
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "text": "whole world",
+  "embedding": [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+}
+
+### Index Documents with Embeddings #4
+POST {{opensearch-host}}/{{index}}/_doc
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "text": "kitten",
+  "embedding": [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
+}
+
+### Index Documents with Embeddings #5
+POST {{opensearch-host}}/{{index}}/_doc
+Content-Type: application/json
+Authorization: Basic {{opensearch-basic-auth}}
+
+{
+  "text": "dog walker",
+  "embedding": [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
+}
