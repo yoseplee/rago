@@ -1,16 +1,15 @@
-package http
+package openAIEmbedding
 
 import (
 	"context"
 	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago/infra"
-	"github.com/yoseplee/rago/models/openAIEmbedding"
 )
 
 type OpenAIHTTPAdapter struct {
 }
 
-func (o *OpenAIHTTPAdapter) GenerateEmbeddings(documents []string) ([]openAIEmbedding.Embedding, error) {
+func (o *OpenAIHTTPAdapter) GenerateEmbeddings(documents []string) ([]Embedding, error) {
 	embeddings, err := infra.OpenAIClient.Embeddings.New(
 		context.TODO(),
 		openai.EmbeddingNewParams{
@@ -22,9 +21,9 @@ func (o *OpenAIHTTPAdapter) GenerateEmbeddings(documents []string) ([]openAIEmbe
 		panic(err)
 	}
 
-	var result []openAIEmbedding.Embedding
+	var result []Embedding
 	for _, embedding := range embeddings.Data {
-		result = append(result, openAIEmbedding.NewEmbedding(embedding.Embedding))
+		result = append(result, NewEmbedding(embedding.Embedding))
 	}
 
 	return result, nil

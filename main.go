@@ -5,9 +5,19 @@ import (
 	"fmt"
 	"github.com/openai/openai-go"
 	. "github.com/yoseplee/rago/infra"
+	"github.com/yoseplee/rago/models/openAIEmbedding"
 )
 
 func main() {
+	oa := openAIEmbedding.OpenAIHTTPAdapter{}
+	embeddings, err := oa.GenerateEmbeddings([]string{"my new world"})
+	if err != nil {
+		panic(err)
+	}
+	for i, embedding := range embeddings {
+		fmt.Printf("[%d] embedding: %+v\n: ", i, embedding.Vector())
+	}
+	fmt.Println()
 
 	//embeddings, err := OpenAIClient.Embeddings.New(
 	//	context.TODO(),
