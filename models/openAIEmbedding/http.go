@@ -9,12 +9,16 @@ import (
 type OpenAIHTTPAdapter struct {
 }
 
+func NewAdapter() *OpenAIHTTPAdapter {
+	return &OpenAIHTTPAdapter{}
+}
+
 func (o *OpenAIHTTPAdapter) GenerateEmbeddings(documents []string) ([]Embedding, error) {
 	embeddings, err := infra.OpenAIClient.Embeddings.New(
 		context.TODO(),
 		openai.EmbeddingNewParams{
 			Input: openai.F[openai.EmbeddingNewParamsInputUnion](openai.EmbeddingNewParamsInputArrayOfStrings(documents)),
-			Model: openai.F(openai.EmbeddingModelTextEmbedding3Small),
+			Model: openai.F(openai.EmbeddingModelTextEmbedding3Large),
 		},
 	)
 	if err != nil {
