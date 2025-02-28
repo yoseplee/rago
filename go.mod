@@ -1,9 +1,10 @@
-module "github.com/yoseplee/rago"
+module github.com/yoseplee/rago
 
 go 1.24.0
 
 require (
 	github.com/openai/openai-go v0.1.0-alpha.59
+	github.com/opensearch-project/opensearch-go v1.1.0
 	github.com/spf13/viper v1.19.0
 )
 
