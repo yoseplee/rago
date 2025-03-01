@@ -1,12 +1,12 @@
-package rago
+package v1
 
 import (
 	"bytes"
 	"encoding/json"
 
 	"github.com/yoseplee/rago/infra"
-	"github.com/yoseplee/rago/models"
-	"github.com/yoseplee/rago/models/openAIEmbedding"
+	models2 "github.com/yoseplee/rago/v1/models"
+	openAIEmbedding2 "github.com/yoseplee/rago/v1/models/openAIEmbedding"
 	"go.uber.org/zap"
 )
 
@@ -17,21 +17,21 @@ type Ingester interface {
 }
 
 type DefaultIngester struct {
-	OpenAIEmbeddingAdapter openAIEmbedding.Adapter
+	OpenAIEmbeddingAdapter openAIEmbedding2.Adapter
 	Loader
 }
 
 func NewDefaultIngester(loader Loader) *DefaultIngester {
 	return &DefaultIngester{
-		OpenAIEmbeddingAdapter: openAIEmbedding.NewAdapter(),
+		OpenAIEmbeddingAdapter: openAIEmbedding2.NewAdapter(),
 		Loader:                 loader,
 	}
 }
 
 type openSearchDocument struct {
-	Embedding models.Vector    `json:"embedding"`
-	Dimension models.Dimension `json:"dimension"`
-	Content   string           `json:"content"`
+	Embedding models2.Vector    `json:"embedding"`
+	Dimension models2.Dimension `json:"dimension"`
+	Content   string            `json:"content"`
 }
 
 func (d *DefaultIngester) Ingest() error {

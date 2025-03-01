@@ -5,7 +5,7 @@ import (
 
 	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago/infra"
-	"github.com/yoseplee/rago/models"
+	"github.com/yoseplee/rago/v1/models"
 )
 
 type OpenAIHTTPAdapter struct {

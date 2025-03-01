@@ -1,4 +1,4 @@
-package rago
+package v1
 
 import (
 	"context"
