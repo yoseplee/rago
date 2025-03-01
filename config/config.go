@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -32,14 +33,16 @@ func init() {
 				vector:     viper.GetString("knowledgeBase.openSearch.vector"),
 			},
 		},
+		SampleFilePath: "data/sample_shop_items_all.json",
 	}
 	fmt.Printf("%+v\n", Config)
 }
 
 type config struct {
-	Profile       string
-	OpenAI        openAI
-	KnowledgeBase knowledgeBase
+	Profile        string
+	OpenAI         openAI
+	KnowledgeBase  knowledgeBase
+	SampleFilePath string
 }
 
 type openAI struct {

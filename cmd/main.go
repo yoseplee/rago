@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/yoseplee/rago"
+	"github.com/yoseplee/rago/config"
 	"github.com/yoseplee/rago/infra"
 )
 
@@ -18,7 +19,7 @@ func retrieve() {
 }
 
 func ingest() {
-	ingester := rago.NewDefaultIngester(rago.JSONLoader{FilePath: "sample_shop_items_all.json"})
+	ingester := rago.NewDefaultIngester(rago.JSONLoader{FilePath: config.Config.SampleFilePath})
 	if err := ingester.Ingest(); err != nil {
 		panic(err)
 	}
