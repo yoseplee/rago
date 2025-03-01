@@ -5,7 +5,8 @@ type Retriever interface {
 }
 
 type DefaultRetriever struct {
-	topK int
+	collectionName string
+	topK           int
 	EmbeddingGenerator
 	KnowledgeSearchable
 }
@@ -20,7 +21,7 @@ func (d DefaultRetriever) Retrieve(document Document) ([]Documents, error) {
 		return nil, embeddingGenerateErr
 	}
 
-	searchResults, searchErr := d.KnowledgeSearchable.Search(inputEmbeddings, d.topK)
+	searchResults, searchErr := d.KnowledgeSearchable.Search(d.collectionName, inputEmbeddings, d.topK)
 	if searchErr != nil {
 		return nil, searchErr
 	}

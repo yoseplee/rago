@@ -1,7 +1,7 @@
 package v2
 
 type KnowledgeSearchable interface {
-	Search(embeddings Embeddings, topK int) ([]Documents, error)
+	Search(collectionName string, embeddings Embeddings, topK int) ([]Documents, error)
 }
 
 type KnowledgeAddable interface {
