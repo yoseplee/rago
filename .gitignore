@@ -167,3 +167,4 @@ Temporary Items
 # iCloud generated files
 *.icloud
 /.idea/
+/tool/http-client.env.json

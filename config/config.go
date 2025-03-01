@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -10,6 +12,7 @@ func init() {
 	viper.AddConfigPath(".")
 	viper.SetConfigName("./config/local")
 	viper.SetConfigType("yaml")
+	viper.SetDefault("openai.base-url", "https://api.openai.com/v1/")
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
 	}
@@ -17,18 +20,33 @@ func init() {
 	Config = config{
 		Profile: viper.GetString("profile"),
 		OpenAI: openAI{
+			BaseUrl:    viper.GetString("openai.base-url"),
 			ApiKey:     viper.GetString("openai.api-key"),
 			MaxRetries: viper.GetInt("openai.max-retries"),
 		},
+		KnowledgeBase: knowledgeBase{
+			OpenSearch: openSearch{
+				Address:    viper.GetString("knowledgeBase.openSearch.address"),
+				Username:   viper.GetString("knowledgeBase.openSearch.username"),
+				Password:   viper.GetString("knowledgeBase.openSearch.password"),
+				collection: viper.GetString("knowledgeBase.openSearch.collection"),
+				vector:     viper.GetString("knowledgeBase.openSearch.vector"),
+			},
+		},
+		SampleFilePath: "data/sample_shop_items_all.json",
 	}
+	fmt.Printf("%+v\n", Config)
 }
 
 type config struct {
-	Profile string
-	OpenAI  openAI
+	Profile        string
+	OpenAI         openAI
+	KnowledgeBase  knowledgeBase
+	SampleFilePath string
 }
 
 type openAI struct {
+	BaseUrl    string
 	ApiKey     string
 	MaxRetries int
 	Models     openAIModels
@@ -40,3 +58,15 @@ type openAIModels struct {
 }
 
 type openAIModel struct{}
+
+type knowledgeBase struct {
+	OpenSearch openSearch
+}
+
+type openSearch struct {
+	Address    string
+	Username   string
+	Password   string
+	collection string
+	vector     string
+}

@@ -1,5 +1,7 @@
 package openAIEmbedding
 
+import "github.com/yoseplee/rago/models"
+
 type Adapter interface {
-	GenerateEmbedding(document string) (error, Embedding)
+	GenerateEmbeddings(document []string) ([]models.Embedding, error)
 }

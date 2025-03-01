@@ -3,14 +3,17 @@ package openAIEmbedding
 import "github.com/yoseplee/rago/models"
 
 type Embedding struct {
-	D models.Dimension
-	V models.Vector
+	v models.Vector
+}
+
+func NewEmbedding(v models.Vector) Embedding {
+	return Embedding{v: v}
 }
 
 func (e Embedding) Dimension() models.Dimension {
-	return e.D
+	return models.Dimension(len(e.v))
 }
 
 func (e Embedding) Vector() models.Vector {
-	return e.V
+	return e.v
 }
