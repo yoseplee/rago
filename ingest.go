@@ -1,8 +1,10 @@
 package rago
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/yoseplee/rago/infra"
 	"github.com/yoseplee/rago/models/openAIEmbedding"
 	"os"
 )
@@ -42,7 +44,7 @@ type ShopItem struct {
 }
 
 func (d *DefaultIngester) Ingest() error {
-	data, fileReadErr := os.ReadFile("sample_shop_items.json")
+	data, fileReadErr := os.ReadFile("sample_shop_items_all.json")
 	if fileReadErr != nil {
 		return fileReadErr
 	}
@@ -68,6 +70,25 @@ func (d *DefaultIngester) Ingest() error {
 
 	for i, embedding := range embeddings {
 		fmt.Printf("[%d] dimension of embedding: %+v\n", i, embedding.Dimension())
+	}
+
+	for i, embedding := range embeddings {
+		document := map[string]interface{}{
+			"id":        shopItems[i].ID,
+			"embedding": embedding.Vector(),
+			"dimension": embedding.Dimension(),
+			"shopItem":  shopItems[i],
+		}
+
+		documentJSON, err := json.Marshal(document)
+		if err != nil {
+			return err
+		}
+
+		_, err = infra.OpenSearchClient.Index("sim-search-test", bytes.NewReader(documentJSON))
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
