@@ -10,6 +10,8 @@ import (
 	"go.uber.org/zap"
 )
 
+// Ingester is an interface that defines the Ingest method.
+// Ingest method is responsible for loading, modifying, generating embedding, and store the data.
 type Ingester interface {
 	Ingest() error
 }
