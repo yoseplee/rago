@@ -6,7 +6,7 @@ Authorization: Basic {{opensearch-basic-auth}}
 
 
 ### Perform a Vector Seaech
-POST {{opensearch-host}}/sim-search-test/_search
+POST {{opensearch-host}}/{{index}}/_search
 Content-Type: application/json
 Authorization: Basic {{opensearch-basic-auth}}
 
@@ -3103,7 +3103,7 @@ Authorization: Basic {{opensearch-basic-auth}}
 
 
 ### Create Index
-PUT {{opensearch-host}}/sim-search-test
+PUT {{opensearch-host}}/{{index}}
 Content-Type: application/json
 Authorization: Basic {{opensearch-basic-auth}}
 

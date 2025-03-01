@@ -12,7 +12,7 @@ import (
 func main() {
 	defer infra.Logger.Sync()
 
-	ingester := rago.NewDefaultIngester(rago.JSONLoader{FilePath: "sample_shop_item_all.json"})
+	ingester := rago.NewDefaultIngester(rago.JSONLoader{FilePath: "sample_shop_items_all.json"})
 	if err := ingester.Ingest(); err != nil {
 		panic(err)
 	}
