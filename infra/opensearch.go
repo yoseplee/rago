@@ -2,9 +2,10 @@ package infra
 
 import (
 	"crypto/tls"
+	"net/http"
+
 	"github.com/opensearch-project/opensearch-go"
 	"github.com/yoseplee/rago/config"
-	"net/http"
 )
 
 // implement openSearch client

@@ -2,8 +2,9 @@ package rago
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestJSONLoader_Load(t *testing.T) {
