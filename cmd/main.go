@@ -3,13 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago"
 	"github.com/yoseplee/rago/infra"
 )
 
 func main() {
-	ingester := rago.NewDefaultIngester()
+	defer infra.Logger.Sync()
+
+	ingester := rago.NewDefaultIngester(rago.JSONLoader{FilePath: "sample_shop_item_all.json"})
 	if err := ingester.Ingest(); err != nil {
 		panic(err)
 	}
