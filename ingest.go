@@ -17,16 +17,14 @@ type Ingester interface {
 }
 
 type DefaultIngester struct {
-	OpenAIEmbeddingAdapter    openAIEmbedding.Adapter
-	VectorSearchEngineAdapter interface{}
+	OpenAIEmbeddingAdapter openAIEmbedding.Adapter
 	Loader
 }
 
 func NewDefaultIngester(loader Loader) *DefaultIngester {
 	return &DefaultIngester{
-		OpenAIEmbeddingAdapter:    openAIEmbedding.NewAdapter(),
-		VectorSearchEngineAdapter: nil,
-		Loader:                    loader,
+		OpenAIEmbeddingAdapter: openAIEmbedding.NewAdapter(),
+		Loader:                 loader,
 	}
 }
 
