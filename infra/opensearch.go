@@ -27,3 +27,11 @@ func init() {
 	}
 	OpenSearchClient = client
 }
+
+func Search() []string { return nil }
+
+func CreateIndex(indexName string) error { return nil }
+
+func DeleteIndex(indexName string) error { return nil }
+
+func IndexDocument(document string) error { return nil }

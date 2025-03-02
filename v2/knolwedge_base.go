@@ -12,3 +12,15 @@ type KnowledgeBase interface {
 	KnowledgeAddable
 	KnowledgeSearchable
 }
+
+type OpenSearchKnowledgeBase struct{}
+
+func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embeddings) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (o OpenSearchKnowledgeBase) Search(collectionName string, embeddings Embeddings, topK int) ([]Documents, error) {
+	//TODO implement me
+	panic("implement me")
+}
