@@ -1,10 +1,5 @@
 package v2
 
-// DocumentModifier is responsible for modifying data, such as splitting, mapping, marshalling.
-type DocumentModifier interface {
-	Modify(Documents) (Documents, error)
-}
-
 type DocumentModifiers []DocumentModifier
 
 func (dm DocumentModifiers) ApplyAll(documents Documents) (Documents, error) {
@@ -17,4 +12,9 @@ func (dm DocumentModifiers) ApplyAll(documents Documents) (Documents, error) {
 		}
 	}
 	return modifiedDocuments, nil
+}
+
+// DocumentModifier is responsible for modifying data, such as splitting, mapping, marshalling.
+type DocumentModifier interface {
+	Modify(Documents) (Documents, error)
 }
