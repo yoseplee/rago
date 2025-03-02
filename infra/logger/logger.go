@@ -7,8 +7,11 @@ var zl *zap.Logger
 func init() {
 	zapLogger, _ := zap.NewDevelopment()
 	zap.ReplaceGlobals(zapLogger)
-	defer zl.Sync()
 	zl = zapLogger
+}
+
+func SyncLogger() {
+	zl.Sync()
 }
 
 type LogField[T any] struct {

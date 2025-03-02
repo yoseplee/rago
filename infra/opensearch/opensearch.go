@@ -62,6 +62,20 @@ func IndexDocument(indexName string, document Document) error {
 }
 
 func Search(indexNames []string, query Query) (Response, error) {
+	logger.Debug(
+		"search index",
+		[]logger.LogField[any]{
+			{
+				"index",
+				indexNames,
+			},
+			{
+				"query",
+				query.String(),
+			},
+		},
+	)
+
 	searchResponse, searchErr := c.Search(
 		func(req *opensearchapi.SearchRequest) {
 			req.Index = indexNames
