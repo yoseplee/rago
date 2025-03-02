@@ -32,8 +32,8 @@ func init() {
 	c = client
 }
 
-// IndexDocument stores document into opensearch index.
-func IndexDocument(indexName string, document Document) error {
+// Index stores document into opensearch index.
+func Index(indexName string, document Document) error {
 	logger.Debug(
 		"index document",
 		[]logger.LogField[any]{

@@ -48,7 +48,7 @@ func (d *DefaultIngester) Ingest() error {
 			Content:   documents[i],
 		}
 
-		if err := opensearch.IndexDocument("sim-search-test", o); err != nil {
+		if err := opensearch.Index("sim-search-test", o); err != nil {
 			return err
 		}
 	}
