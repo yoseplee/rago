@@ -10,6 +10,8 @@ type DocumentLoader interface {
 	Load() (Documents, error)
 }
 
+// JSONDocumentLoader implements the DocumentLoader interface to load data from a JSON file.
+// The JSON file must contain an array of JSON objects, each representing a Document.
 type JSONDocumentLoader struct {
 	FilePath string
 }
