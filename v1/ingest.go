@@ -1,11 +1,7 @@
 package v1
 
 import (
-	"bytes"
-	"encoding/json"
-
-	"github.com/yoseplee/rago/infra"
-	"github.com/yoseplee/rago/infra/logger"
+	"github.com/yoseplee/rago/infra/opensearch"
 	models2 "github.com/yoseplee/rago/v1/models"
 	openAIEmbedding2 "github.com/yoseplee/rago/v1/models/openAIEmbedding"
 )
@@ -46,33 +42,13 @@ func (d *DefaultIngester) Ingest() error {
 	}
 
 	for i, embedding := range embeddings {
-		logger.Debug(
-			"Ingesting embedding to index",
-			[]logger.LogField[any]{
-				{
-					"index",
-					i,
-				},
-				{
-					"dimension",
-					int(embedding.Dimension()),
-				},
-			},
-		)
-
-		document := openSearchDocument{
+		o := opensearch.Document{
 			Embedding: embedding.Vector(),
-			Dimension: embedding.Dimension(),
+			Dimension: int(embedding.Dimension()),
 			Content:   documents[i],
 		}
 
-		documentJSON, err := json.Marshal(document)
-		if err != nil {
-			return err
-		}
-
-		_, err = infra.OpenSearchClient.Index("sim-search-test", bytes.NewReader(documentJSON))
-		if err != nil {
+		if err := opensearch.IndexDocument("sim-search-test", o); err != nil {
 			return err
 		}
 	}
