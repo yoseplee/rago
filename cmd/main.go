@@ -2,12 +2,11 @@ package main
 
 import (
 	"github.com/yoseplee/rago/config"
-	"github.com/yoseplee/rago/infra"
 	"github.com/yoseplee/rago/v1"
 )
 
 func main() {
-	defer infra.Logger.Sync()
+
 	retrieve()
 }
 

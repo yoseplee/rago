@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 
 	"github.com/yoseplee/rago/infra"
+	"github.com/yoseplee/rago/infra/logger"
 	models2 "github.com/yoseplee/rago/v1/models"
 	openAIEmbedding2 "github.com/yoseplee/rago/v1/models/openAIEmbedding"
-	"go.uber.org/zap"
 )
 
 // Ingester is an interface that defines the Ingest method.
@@ -46,10 +46,18 @@ func (d *DefaultIngester) Ingest() error {
 	}
 
 	for i, embedding := range embeddings {
-		infra.Logger.Debug(
+		logger.Debug(
 			"Ingesting embedding to index",
-			zap.Int("index", i),
-			zap.Int("dimension", int(embedding.Dimension())),
+			[]logger.LogField[any]{
+				{
+					"index",
+					i,
+				},
+				{
+					"dimension",
+					int(embedding.Dimension()),
+				},
+			},
 		)
 
 		document := openSearchDocument{
