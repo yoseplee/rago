@@ -10,8 +10,8 @@ var OpenAIClient *openai.Client
 
 func init() {
 	OpenAIClient = openai.NewClient(
-		option.WithBaseURL(config.Config.OpenAI.BaseUrl),
-		option.WithAPIKey(config.Config.OpenAI.ApiKey),
-		option.WithMaxRetries(config.Config.OpenAI.MaxRetries),
+		option.WithBaseURL(config.Config.OpenAI["public"].BaseUrl),
+		option.WithAPIKey(config.Config.OpenAI["public"].ApiKey),
+		option.WithMaxRetries(config.Config.OpenAI["public"].MaxRetries),
 	)
 }

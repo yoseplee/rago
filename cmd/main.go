@@ -1,25 +1,18 @@
 package main
 
 import (
-	"github.com/yoseplee/rago/config"
+	"fmt"
+
 	"github.com/yoseplee/rago/infra/logger"
-	"github.com/yoseplee/rago/v1"
+	v2 "github.com/yoseplee/rago/v2"
 )
 
 func main() {
 	defer logger.SyncLogger()
-	retrieve()
+	fmt.Println("hello world")
 }
 
-func retrieve() {
-	retriever := v1.DefaultRetriever{}
-	if err := retriever.Retrieve(); err != nil {
-		panic(err)
-	}
-}
-
-func ingest() {
-	ingester := v1.NewDefaultIngester(v1.JSONLoader{FilePath: config.Config.SampleFilePath})
+func ingest(ingester v2.Ingester) {
 	if err := ingester.Ingest(); err != nil {
 		panic(err)
 	}
