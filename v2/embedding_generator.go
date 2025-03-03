@@ -24,6 +24,7 @@ type OpenAIEmbeddingGenerator struct {
 }
 
 func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, error) {
+	// TODO: move OpenAIClient-using code to infra package.
 	embeddings, err := infra.OpenAIClient.Embeddings.New(
 		context.TODO(),
 		openai.EmbeddingNewParams{
