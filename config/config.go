@@ -28,15 +28,15 @@ func init() {
 }
 
 type config struct {
-	Profile        string                         `yaml:"profile"`
-	Ingesters      map[string]ingester            `yaml:"ingesters"`
-	Retrievers     map[string]retriever           `yaml:"retrievers"`
-	KnowledgeBases map[string]knowledgeBaseConfig `yaml:"knowledgeBases"`
-	OpenAI         map[string]openAIConfig        `yaml:"openai"`
+	Profile        string                  `yaml:"profile"`
+	Ingesters      map[string]ingester     `yaml:"ingesters"`
+	Retrievers     map[string]retriever    `yaml:"retrievers"`
+	KnowledgeBases knowledgeBasesConfig    `yaml:"knowledgeBases"`
+	OpenAI         map[string]openAIConfig `yaml:"openai"`
 }
 
 type ingester struct {
-	DocumentLoader   documentLoaderConfig   `yaml:"documentLoader"`
+	DocumentLoader   documentLoaderConfig   `yaml:"document_loader"`
 	Embedding        embeddingConfig        `yaml:"embedding"`
 	KnowledgeBaseAdd knowledgeBaseAddConfig `yaml:"knowledgeBaseAdd"`
 }
@@ -62,8 +62,8 @@ type knowledgeBaseSearchConfig struct {
 	TopK       int    `yaml:"topK"`
 }
 
-type knowledgeBaseConfig struct {
-	VerdaDev opensearchConfig `yaml:"verdaDev"`
+type knowledgeBasesConfig struct {
+	Opensearch map[string]opensearchConfig `yaml:"opensearch"`
 }
 
 type opensearchConfig struct {

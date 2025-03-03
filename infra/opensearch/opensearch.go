@@ -21,9 +21,9 @@ func init() {
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
-		Addresses: []string{config.Config.KnowledgeBase.OpenSearch.Address},
-		Username:  config.Config.KnowledgeBase.OpenSearch.Username,
-		Password:  config.Config.KnowledgeBase.OpenSearch.Password,
+		Addresses: []string{config.Config.KnowledgeBases.Opensearch["verda-dev"].Address},
+		Username:  config.Config.KnowledgeBases.Opensearch["verda-dev"].Username,
+		Password:  config.Config.KnowledgeBases.Opensearch["verda-dev"].Password,
 	})
 
 	if err != nil {
