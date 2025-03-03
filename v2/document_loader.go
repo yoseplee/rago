@@ -10,6 +10,13 @@ type DocumentLoader interface {
 	Load() (Documents, error)
 }
 
+// TestDocumentLoader always loads a specific documents for test purpose.
+type TestDocumentLoader struct{}
+
+func (t TestDocumentLoader) Load() (Documents, error) {
+	return []Document{}, nil
+}
+
 // JSONDocumentLoader implements the DocumentLoader interface to load data from a JSON file.
 // The JSON file must contain an array of JSON objects, each representing a Document.
 type JSONDocumentLoader struct {
