@@ -11,6 +11,7 @@ Content-Type: application/json
 Authorization: Basic {{opensearch-basic-auth}}
 
 {
+  "size": 5,
   "query": {
     "knn": {
       "embedding": {

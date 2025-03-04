@@ -9,6 +9,7 @@ type Query interface {
 }
 
 type KNNQuery struct {
+	Size  int `json:"size"`
 	Query struct {
 		Knn struct {
 			Embedding struct {
@@ -29,6 +30,7 @@ func NewKNNQuery(
 	topK int,
 ) KNNQuery {
 	return KNNQuery{
+		Size: topK,
 		Query: struct {
 			Knn struct {
 				Embedding struct {
