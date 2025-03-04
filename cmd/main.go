@@ -21,7 +21,7 @@ func main() {
 		EmbeddingGenerator: v2.OpenAIEmbeddingGenerator{
 			ModelName: v2.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
 			Dimension: v2.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
-			Client:    infra.LinecorpOpenAIClient,
+			Client:    infra.OpenAIClient,
 		},
 		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{
 			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
@@ -37,7 +37,16 @@ func main() {
 
 	retrieved, err := retriever.Retrieve(item)
 	if err != nil {
-		panic(err)
+		logger.Error(
+			"failed to retrive documents",
+			[]logger.F[any]{
+				{
+					"err",
+					err.Error(),
+				},
+			},
+		)
+		return
 	}
 
 	fmt.Printf("Retrieved %d documents\n", len(retrieved))
