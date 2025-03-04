@@ -38,7 +38,7 @@ func main() {
 			scores = append(scores, r.Score)
 		}
 
-		chatCompletion, err := infra.OpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+		chatCompletion, err := infra.LinecorpOpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 				openai.UserMessage(fmt.Sprintf(
 					"Here is some contexts from our Vector Database: [%+v]. Let's say those are candidates. Here's score [0, 1] for each candidate: [%+v].",
@@ -49,7 +49,7 @@ func main() {
 				openai.UserMessage("You must follow instructions carefully. You must provide the name of item. Also you must provide reason for each suggestions(NOT score). And finally you must list up maximum 5 items for substitution."),
 				openai.UserMessage("Note that our user might not happy with your suggestion. Be careful with your answer."),
 			}),
-			Model: openai.F(openai.ChatModelGPT3_5Turbo),
+			Model: openai.F(openai.ChatModelGPT4o),
 		})
 		if err != nil {
 			panic(err.Error())
