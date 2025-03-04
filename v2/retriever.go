@@ -1,9 +1,11 @@
 package v2
 
-import "github.com/yoseplee/rago/infra/logger"
+import (
+	"github.com/yoseplee/rago/infra/logger"
+)
 
 type Retriever interface {
-	Retrieve(document Document) (Documents, error)
+	Retrieve(document Document) ([]SimilarKnowledgeSearchResults, error)
 }
 
 type DefaultRetriever struct {
@@ -17,7 +19,7 @@ type CandidateGenerator interface { // To Vector Search Engine
 	Generate(embeddings Embeddings) ([]Documents, error)
 }
 
-func (d DefaultRetriever) Retrieve(document Document) ([]Documents, error) {
+func (d DefaultRetriever) Retrieve(document Document) ([]SimilarKnowledgeSearchResults, error) {
 	inputEmbeddings, embeddingGenerateErr := d.EmbeddingGenerator.Generate([]Document{document})
 	if embeddingGenerateErr != nil {
 		return nil, embeddingGenerateErr
@@ -60,28 +62,5 @@ func (d DefaultRetriever) Retrieve(document Document) ([]Documents, error) {
 		}
 	}
 
-	var results []Documents
-	for _, searchResult := range searchResults {
-		var similarDocuments Documents
-		for _, r := range searchResult {
-			similarDocuments = append(similarDocuments, r.Document)
-		}
-		results = append(results, similarDocuments)
-	}
-
-	logger.Debug(
-		"search result",
-		[]logger.LogField[any]{
-			{
-				"document",
-				document,
-			},
-			{
-				"results",
-				results,
-			},
-		},
-	)
-
-	return results, nil
+	return searchResults, nil
 }
