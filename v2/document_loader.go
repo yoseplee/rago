@@ -29,14 +29,14 @@ func (j JSONDocumentLoader) Load() (Documents, error) {
 		return nil, readFileErr
 	}
 
-	var unmarshalledObjects []interface{}
-	if unmarshalErr := json.Unmarshal(file, &unmarshalledObjects); unmarshalErr != nil {
+	var jsonArray []interface{}
+	if unmarshalErr := json.Unmarshal(file, &jsonArray); unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
 
 	var documents Documents
-	for _, unmarshalledObject := range unmarshalledObjects {
-		marshalledObject, marshalErr := json.Marshal(unmarshalledObject)
+	for _, jsonObject := range jsonArray {
+		marshalledObject, marshalErr := json.Marshal(jsonObject)
 		if marshalErr != nil {
 			return nil, marshalErr
 		}
