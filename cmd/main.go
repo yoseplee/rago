@@ -13,7 +13,6 @@ import (
 )
 
 func main() {
-	config.InitConfig()
 	defer logger.SyncLogger()
 
 	retriever := v2.DefaultRetriever{

@@ -9,7 +9,7 @@ import (
 
 var Config config
 
-func InitConfig() {
+func init() {
 	viper.AddConfigPath(".")
 	viper.SetConfigName("./config/local")
 	viper.SetConfigType("yaml")
@@ -23,6 +23,7 @@ func InitConfig() {
 
 	prettyConfig, _ := json.MarshalIndent(Config, "", "  ")
 	fmt.Println(string(prettyConfig))
+
 }
 
 type config struct {
