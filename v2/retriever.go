@@ -5,8 +5,10 @@ import (
 )
 
 type Retriever interface {
-	Retrieve(document Document) ([]SimilarKnowledgeSearchResults, error)
+	Retrieve(document Document) (Retrieved, error)
 }
+
+type Retrieved []SimilarKnowledgeSearchResults
 
 type DefaultRetriever struct {
 	TopK int
@@ -18,7 +20,7 @@ type CandidateGenerator interface { // To Vector Search Engine
 	Generate(embeddings Embeddings) ([]Documents, error)
 }
 
-func (d DefaultRetriever) Retrieve(document Document) ([]SimilarKnowledgeSearchResults, error) {
+func (d DefaultRetriever) Retrieve(document Document) (Retrieved, error) {
 	inputEmbeddings, embeddingGenerateErr := d.EmbeddingGenerator.Generate([]Document{document})
 	if embeddingGenerateErr != nil {
 		return nil, embeddingGenerateErr

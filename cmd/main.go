@@ -26,15 +26,15 @@ func main() {
 	}
 
 	item := v2.Document("大塚製薬　ポカリスエット　500ml（45019517）")
-	retrieve, err := retriever.Retrieve(item)
+	retrieved, err := retriever.Retrieve(item)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf("Retrieved %d documents\n", len(retrieve))
-	for _, results := range retrieve {
-		documents := results.Documents()
-		scores := results.Scores()
+	fmt.Printf("Retrieved %d documents\n", len(retrieved))
+	for _, result := range retrieved {
+		documents := result.Documents()
+		scores := result.Scores()
 
 		chatCompletion, err := infra.LinecorpOpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
