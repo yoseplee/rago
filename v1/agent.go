@@ -1,4 +1,4 @@
-package v2
+package v1
 
 // Agent is responsible for autonomously making decisions based on given prompts.
 type Agent interface {

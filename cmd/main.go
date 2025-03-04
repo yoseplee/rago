@@ -9,27 +9,27 @@ import (
 	"github.com/yoseplee/rago/infra"
 	"github.com/yoseplee/rago/infra/logger"
 	"github.com/yoseplee/rago/infra/opensearch"
-	v2 "github.com/yoseplee/rago/v2"
+	"github.com/yoseplee/rago/v1"
 )
 
 func main() {
 	defer logger.SyncLogger()
 
-	retriever := v2.DefaultRetriever{
+	retriever := v1.DefaultRetriever{
 		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
-		EmbeddingGenerator: v2.OpenAIEmbeddingGenerator{
-			ModelName: v2.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
-			Dimension: v2.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
+		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
+			ModelName: v1.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
+			Dimension: v1.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
 			Client:    infra.OpenAIClient,
 		},
-		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{
+		KnowledgeSearchable: v1.OpenSearchKnowledgeBase{
 			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
 			Indexable:       opensearch.GetClient(),
 			IndexSearchable: opensearch.GetClient(),
 		},
 	}
 
-	item := []v2.Document{
+	item := []v1.Document{
 		"大塚製薬　ポカリスエット　500ml（45019517）",
 		"アンシャンテ メイクアップスポンジ 三角タイプ 38個（4540474777979）",
 	}
