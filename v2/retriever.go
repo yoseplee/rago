@@ -42,8 +42,30 @@ func (d DefaultRetriever) Retrieve(document Document) ([]Documents, error) {
 		return nil, searchErr
 	}
 
+	for _, searchResult := range searchResults {
+		for _, r := range searchResult {
+			logger.Debug(
+				"search result",
+				[]logger.LogField[any]{
+					{
+						"score",
+						r.Score,
+					},
+					{
+						"document",
+						r.Document,
+					},
+				},
+			)
+		}
+	}
+
 	var results []Documents
-	for _, similarDocuments := range searchResults {
+	for _, searchResult := range searchResults {
+		var similarDocuments Documents
+		for _, r := range searchResult {
+			similarDocuments = append(similarDocuments, r.Document)
+		}
 		results = append(results, similarDocuments)
 	}
 

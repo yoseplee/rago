@@ -3,8 +3,15 @@ package v2
 import "github.com/yoseplee/rago/infra/opensearch"
 
 type KnowledgeSearchable interface {
-	Search(collectionName string, embeddings Embeddings, topK int) ([]Documents, error)
+	Search(collectionName string, embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error)
 }
+
+type SimilarKnowledgeSearchResult struct {
+	Document
+	Score float64
+}
+
+type SimilarKnowledgeSearchResults []SimilarKnowledgeSearchResult
 
 type KnowledgeAddable interface {
 	Add(collectionName string, embeddings Embeddings, contents Documents) error
@@ -33,16 +40,19 @@ func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embedding
 	return nil
 }
 
-func (o OpenSearchKnowledgeBase) Search(collectionName string, embeddings Embeddings, topK int) ([]Documents, error) {
-	var results []Documents
+func (o OpenSearchKnowledgeBase) Search(collectionName string, embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error) {
+	var results []SimilarKnowledgeSearchResults
 	for _, e := range embeddings.Embeddings {
 		queryResult, err := opensearch.Search([]string{collectionName}, opensearch.NewKNNQuery(e, topK))
 		if err != nil {
 			return nil, err
 		}
-		var searchResult Documents
+		var searchResult SimilarKnowledgeSearchResults
 		for _, hit := range queryResult.Hits.Hits {
-			searchResult = append(searchResult, Document(hit.Source.Content))
+			searchResult = append(searchResult, SimilarKnowledgeSearchResult{
+				Document: Document(hit.Source.Content),
+				Score:    hit.Score,
+			})
 		}
 
 		results = append(results, searchResult)
