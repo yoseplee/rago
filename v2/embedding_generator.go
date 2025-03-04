@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/openai/openai-go"
-	"github.com/yoseplee/rago/infra"
 	"github.com/yoseplee/rago/infra/logger"
 )
 
@@ -21,11 +20,12 @@ type EmbeddingGenerator interface {
 type OpenAIEmbeddingGenerator struct {
 	ModelName
 	Dimension
+	Client *openai.Client
 }
 
 func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, error) {
 	// TODO: move OpenAIClient-using code to infra package.
-	embeddings, err := infra.OpenAIClient.Embeddings.New(
+	embeddings, err := o.Client.Embeddings.New(
 		context.TODO(),
 		openai.EmbeddingNewParams{
 			Input: openai.F[openai.EmbeddingNewParamsInputUnion](openai.EmbeddingNewParamsInputArrayOfStrings(documents.AsStrings())),

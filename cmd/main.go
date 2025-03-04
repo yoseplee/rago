@@ -20,6 +20,7 @@ func main() {
 		EmbeddingGenerator: v2.OpenAIEmbeddingGenerator{
 			ModelName: v2.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
 			Dimension: v2.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
+			Client:    infra.LinecorpOpenAIClient,
 		},
 		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{
 			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
