@@ -41,13 +41,13 @@ func main() {
 		chatCompletion, err := infra.LinecorpOpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 				openai.UserMessage(fmt.Sprintf(
-					"Here is some contexts from our Vector Database: [%+v]. Let's say those are candidates. Here's score [0, 1] for each candidate: [%+v].",
+					"Here are some context documents retrieved from our Vector Database: [%+v]. These documents are potential candidates. Each candidate has a relevance score between 0 and 1: [%+v].",
 					documents,
 					scores,
 				)),
-				openai.UserMessage("Suggest the best substitution for the item [大塚製薬　ポカリスエット　500ml（45019517）]"),
-				openai.UserMessage("You must follow instructions carefully. You must provide the name of item. Also you must provide reason for each suggestions(NOT score). And finally you must list up maximum 5 items for substitution."),
-				openai.UserMessage("Note that our user might not happy with your suggestion. Be careful with your answer."),
+				openai.UserMessage("Please suggest the best alternative for the item [大塚製薬　ポカリスエット　500ml（45019517）]."),
+				openai.UserMessage("Follow these instructions carefully: Provide the name of the recommended item, explain the reason for each suggestion (do not mention the score), and list up to 5 items as alternatives."),
+				openai.UserMessage("Note that the user may not be satisfied with your suggestions. Please be cautious with your recommendations."),
 			}),
 			Model: openai.F(openai.ChatModelGPT4o),
 		})
