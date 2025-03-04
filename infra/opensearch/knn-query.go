@@ -2,8 +2,6 @@ package opensearch
 
 import (
 	"encoding/json"
-
-	v2 "github.com/yoseplee/rago/v2"
 )
 
 type Query interface {
@@ -27,7 +25,7 @@ func (k KNNQuery) String() string {
 }
 
 func NewKNNQuery(
-	embedding v2.Embedding,
+	embedding []float64,
 	topK int,
 ) KNNQuery {
 	return KNNQuery{

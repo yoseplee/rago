@@ -10,6 +10,10 @@ type ModelName string
 
 type Embedding []float64
 
+func (e Embedding) Dimension() Dimension {
+	return Dimension(len(e))
+}
+
 func (e Embedding) AllZero() bool {
 	for _, v := range e {
 		if v != 0 {
