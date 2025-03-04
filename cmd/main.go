@@ -33,12 +33,8 @@ func main() {
 
 	fmt.Printf("Retrieved %d documents\n", len(retrieve))
 	for _, results := range retrieve {
-		var documents v2.Documents
-		var scores []float64
-		for _, r := range results {
-			documents = append(documents, r.Document)
-			scores = append(scores, r.Score)
-		}
+		documents := results.Documents()
+		scores := results.Scores()
 
 		chatCompletion, err := infra.LinecorpOpenAIClient.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{

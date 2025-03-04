@@ -13,6 +13,26 @@ type SimilarKnowledgeSearchResult struct {
 
 type SimilarKnowledgeSearchResults []SimilarKnowledgeSearchResult
 
+func (srs SimilarKnowledgeSearchResults) Len() int {
+	return len(srs)
+}
+
+func (srs SimilarKnowledgeSearchResults) Documents() []Document {
+	var documents []Document
+	for _, sr := range srs {
+		documents = append(documents, sr.Document)
+	}
+	return documents
+}
+
+func (srs SimilarKnowledgeSearchResults) Scores() []float64 {
+	var scores []float64
+	for _, sr := range srs {
+		scores = append(scores, sr.Score)
+	}
+	return scores
+}
+
 type KnowledgeAddable interface {
 	Add(embeddings Embeddings, contents Documents) error
 }
