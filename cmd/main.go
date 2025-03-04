@@ -14,7 +14,30 @@ import (
 
 func main() {
 	defer logger.SyncLogger()
+}
 
+func ingest() {
+	ingester := v1.DefaultIngester{
+		DocumentLoader:    v1.JSONDocumentLoader{FilePath: "data/sample_shop_items.json"},
+		DocumentModifiers: nil,
+		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
+			ModelName: v1.ModelName(config.Config.Ingesters["default"].EmbeddingGenerator.Model),
+			Dimension: v1.Dimension(config.Config.Ingesters["default"].EmbeddingGenerator.Dimension),
+			Client:    infra.OpenAIClient,
+		},
+		KnowledgeAddable: v1.OpenSearchKnowledgeBase{
+			CollectionName:  config.Config.Ingesters["default"].KnowledgeBaseAdd.Collection,
+			Indexable:       opensearch.GetClient(),
+			IndexSearchable: opensearch.GetClient(),
+		},
+	}
+
+	if err := ingester.Ingest(); err != nil {
+		panic(err)
+	}
+}
+
+func retrieve() {
 	retriever := v1.DefaultRetriever{
 		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
