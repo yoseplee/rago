@@ -38,7 +38,7 @@ func (d DefaultIngester) Ingest() error {
 		return fmt.Errorf("%w: %v", IngestErr, embeddingGenerateErr)
 	}
 
-	if storeErr := d.KnowledgeAddable.Add(d.CollectionName, embeddings); storeErr != nil {
+	if storeErr := d.KnowledgeAddable.Add(d.CollectionName, embeddings, modifiedDocuments); storeErr != nil {
 		return fmt.Errorf("%w: %v", IngestErr, storeErr)
 	}
 

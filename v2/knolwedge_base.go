@@ -34,6 +34,18 @@ func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embedding
 }
 
 func (o OpenSearchKnowledgeBase) Search(collectionName string, embeddings Embeddings, topK int) ([]Documents, error) {
-	//TODO implement me
-	panic("implement me")
+	var results []Documents
+	for _, e := range embeddings.Embeddings {
+		queryResult, err := opensearch.Search([]string{collectionName}, opensearch.NewKNNQuery(e, topK))
+		if err != nil {
+			return nil, err
+		}
+		var searchResult Documents
+		for _, hit := range queryResult.Hits.Hits {
+			searchResult = append(searchResult, Document(hit.Source.Content))
+		}
+
+		results = append(results, searchResult)
+	}
+	return results, nil
 }
