@@ -3,8 +3,8 @@ package v1
 import (
 	"errors"
 
-	"github.com/yoseplee/rago/infra"
 	"github.com/yoseplee/rago/infra/logger"
+	"github.com/yoseplee/rago/infra/openai"
 )
 
 var (
@@ -19,7 +19,7 @@ type EmbeddingGenerator interface {
 type OpenAIEmbeddingGenerator struct {
 	ModelName
 	Dimension
-	infra.EmbeddingGeneratable
+	openai.EmbeddingGeneratable
 }
 
 func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, error) {
