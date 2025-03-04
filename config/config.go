@@ -35,13 +35,13 @@ type config struct {
 }
 
 type ingester struct {
-	DocumentLoader   documentLoaderConfig   `yaml:"document_loader"`
-	Embedding        embeddingConfig        `yaml:"embedding"`
-	KnowledgeBaseAdd knowledgeBaseAddConfig `yaml:"knowledgeBaseAdd"`
+	DocumentLoader     documentLoaderConfig   `yaml:"document_loader"`
+	EmbeddingGenerator embeddingConfig        `yaml:"embedding"`
+	KnowledgeBaseAdd   knowledgeBaseAddConfig `yaml:"knowledgeBaseAdd"`
 }
 
 type retriever struct {
-	Embedding           embeddingConfig           `yaml:"embedding"`
+	EmbeddingGenerator  embeddingConfig           `yaml:"embedding"`
 	KnowledgeBaseSearch knowledgeBaseSearchConfig `yaml:"knowledgeBaseSearch"`
 }
 

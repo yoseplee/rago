@@ -18,8 +18,8 @@ func main() {
 		CollectionName: config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
 		TopK:           config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
 		EmbeddingGenerator: v2.OpenAIEmbeddingGenerator{
-			ModelName: v2.ModelName(config.Config.Retrievers["default"].Embedding.Model),
-			Dimension: v2.Dimension(config.Config.Retrievers["default"].Embedding.Dimension),
+			ModelName: v2.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
+			Dimension: v2.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
 		},
 		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{},
 	}
