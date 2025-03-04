@@ -9,8 +9,7 @@ type Retriever interface {
 }
 
 type DefaultRetriever struct {
-	CollectionName string
-	TopK           int
+	TopK int
 	EmbeddingGenerator
 	KnowledgeSearchable
 }
@@ -39,7 +38,7 @@ func (d DefaultRetriever) Retrieve(document Document) ([]SimilarKnowledgeSearchR
 		},
 	)
 
-	searchResults, searchErr := d.KnowledgeSearchable.Search(d.CollectionName, inputEmbeddings, d.TopK)
+	searchResults, searchErr := d.KnowledgeSearchable.Search(inputEmbeddings, d.TopK)
 	if searchErr != nil {
 		return nil, searchErr
 	}

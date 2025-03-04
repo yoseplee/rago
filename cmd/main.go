@@ -15,13 +15,14 @@ func main() {
 	defer logger.SyncLogger()
 
 	retriever := v2.DefaultRetriever{
-		CollectionName: config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
-		TopK:           config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
+		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
 		EmbeddingGenerator: v2.OpenAIEmbeddingGenerator{
 			ModelName: v2.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
 			Dimension: v2.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
 		},
-		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{},
+		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{
+			CollectionName: config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
+		},
 	}
 
 	item := v2.Document("大塚製薬　ポカリスエット　500ml（45019517）")

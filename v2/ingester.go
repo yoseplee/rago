@@ -15,7 +15,6 @@ type Ingester interface {
 }
 
 type DefaultIngester struct {
-	CollectionName string
 	DocumentLoader
 	DocumentModifiers
 	EmbeddingGenerator
@@ -38,7 +37,7 @@ func (d DefaultIngester) Ingest() error {
 		return fmt.Errorf("%w: %v", IngestErr, embeddingGenerateErr)
 	}
 
-	if storeErr := d.KnowledgeAddable.Add(d.CollectionName, embeddings, modifiedDocuments); storeErr != nil {
+	if storeErr := d.KnowledgeAddable.Add(embeddings, modifiedDocuments); storeErr != nil {
 		return fmt.Errorf("%w: %v", IngestErr, storeErr)
 	}
 

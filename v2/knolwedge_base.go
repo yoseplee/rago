@@ -3,7 +3,7 @@ package v2
 import "github.com/yoseplee/rago/infra/opensearch"
 
 type KnowledgeSearchable interface {
-	Search(collectionName string, embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error)
+	Search(embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error)
 }
 
 type SimilarKnowledgeSearchResult struct {
@@ -14,7 +14,7 @@ type SimilarKnowledgeSearchResult struct {
 type SimilarKnowledgeSearchResults []SimilarKnowledgeSearchResult
 
 type KnowledgeAddable interface {
-	Add(collectionName string, embeddings Embeddings, contents Documents) error
+	Add(embeddings Embeddings, contents Documents) error
 }
 
 type KnowledgeBase interface {
@@ -22,9 +22,11 @@ type KnowledgeBase interface {
 	KnowledgeSearchable
 }
 
-type OpenSearchKnowledgeBase struct{}
+type OpenSearchKnowledgeBase struct {
+	CollectionName string
+}
 
-func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embeddings, contents Documents) error {
+func (o OpenSearchKnowledgeBase) Add(embeddings Embeddings, contents Documents) error {
 	for i, e := range embeddings.Embeddings {
 		document := opensearch.Document{
 			Embedding: e,
@@ -32,7 +34,7 @@ func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embedding
 			Content:   contents[i],
 		}
 
-		if err := opensearch.Index(collectionName, document); err != nil {
+		if err := opensearch.Index(o.CollectionName, document); err != nil {
 			return err
 		}
 
@@ -40,10 +42,10 @@ func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embedding
 	return nil
 }
 
-func (o OpenSearchKnowledgeBase) Search(collectionName string, embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error) {
+func (o OpenSearchKnowledgeBase) Search(embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error) {
 	var results []SimilarKnowledgeSearchResults
 	for _, e := range embeddings.Embeddings {
-		queryResult, err := opensearch.Search([]string{collectionName}, opensearch.NewKNNQuery(e, topK))
+		queryResult, err := opensearch.Search([]string{o.CollectionName}, opensearch.NewKNNQuery(e, topK))
 		if err != nil {
 			return nil, err
 		}
