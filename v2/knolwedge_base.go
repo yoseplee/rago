@@ -7,7 +7,7 @@ type KnowledgeSearchable interface {
 }
 
 type KnowledgeAddable interface {
-	Add(collectionName string, embeddings Embeddings) error
+	Add(collectionName string, embeddings Embeddings, contents Documents) error
 }
 
 type KnowledgeBase interface {
@@ -17,12 +17,12 @@ type KnowledgeBase interface {
 
 type OpenSearchKnowledgeBase struct{}
 
-func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embeddings) error {
-	for _, e := range embeddings.Embeddings {
+func (o OpenSearchKnowledgeBase) Add(collectionName string, embeddings Embeddings, contents Documents) error {
+	for i, e := range embeddings.Embeddings {
 		document := opensearch.Document{
 			Embedding: e,
 			Dimension: int(embeddings.Dimension),
-			Content:   "",
+			Content:   contents[i],
 		}
 
 		if err := opensearch.Index(collectionName, document); err != nil {
