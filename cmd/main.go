@@ -25,7 +25,11 @@ func main() {
 		},
 	}
 
-	item := v2.Document("大塚製薬　ポカリスエット　500ml（45019517）")
+	item := []v2.Document{
+		"大塚製薬　ポカリスエット　500ml（45019517）",
+		"アンシャンテ メイクアップスポンジ 三角タイプ 38個（4540474777979）",
+	}
+
 	retrieved, err := retriever.Retrieve(item)
 	if err != nil {
 		panic(err)

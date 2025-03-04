@@ -20,8 +20,8 @@ type CandidateGenerator interface { // To Vector Search Engine
 	Generate(embeddings Embeddings) ([]Documents, error)
 }
 
-func (d DefaultRetriever) Retrieve(document Document) (Retrieved, error) {
-	inputEmbeddings, embeddingGenerateErr := d.EmbeddingGenerator.Generate([]Document{document})
+func (d DefaultRetriever) Retrieve(documents Documents) (Retrieved, error) {
+	inputEmbeddings, embeddingGenerateErr := d.EmbeddingGenerator.Generate(documents)
 	if embeddingGenerateErr != nil {
 		return nil, embeddingGenerateErr
 	}
@@ -31,7 +31,7 @@ func (d DefaultRetriever) Retrieve(document Document) (Retrieved, error) {
 		[]logger.LogField[any]{
 			{
 				"documents",
-				document,
+				documents,
 			},
 			{
 				"embeddings",
