@@ -44,6 +44,8 @@ type KnowledgeBase interface {
 
 type OpenSearchKnowledgeBase struct {
 	CollectionName string
+	opensearch.Indexable
+	opensearch.IndexSearchable
 }
 
 func (o OpenSearchKnowledgeBase) Add(embeddings Embeddings, contents Documents) error {
@@ -54,7 +56,7 @@ func (o OpenSearchKnowledgeBase) Add(embeddings Embeddings, contents Documents) 
 			Content:   contents[i],
 		}
 
-		if err := opensearch.Index(o.CollectionName, document); err != nil {
+		if err := o.Indexable.Index(o.CollectionName, document); err != nil {
 			return err
 		}
 
@@ -65,7 +67,7 @@ func (o OpenSearchKnowledgeBase) Add(embeddings Embeddings, contents Documents) 
 func (o OpenSearchKnowledgeBase) Search(embeddings Embeddings, topK int) ([]SimilarKnowledgeSearchResults, error) {
 	var results []SimilarKnowledgeSearchResults
 	for _, e := range embeddings.Embeddings {
-		queryResult, err := opensearch.Search([]string{o.CollectionName}, opensearch.NewKNNQuery(e, topK))
+		queryResult, err := o.IndexSearchable.Search([]string{o.CollectionName}, opensearch.NewKNNQuery(e, topK))
 		if err != nil {
 			return nil, err
 		}

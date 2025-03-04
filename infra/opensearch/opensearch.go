@@ -14,7 +14,30 @@ import (
 	"github.com/yoseplee/rago/infra/logger"
 )
 
-var c *opensearch.Client
+var c *DefaultClient
+
+type Indexable interface {
+	Index(indexName string, document Document) error
+}
+
+type IndexSearchable interface {
+	Search(indexNames []string, query Query) (Response, error)
+}
+
+type IndexCreatable interface {
+	CreateKnnIndex(indexName string) error
+}
+
+type IndexDeletable interface {
+	DeleteIndex(indexName string) error
+}
+
+type Client interface {
+	Indexable
+	IndexSearchable
+	IndexCreatable
+	IndexDeletable
+}
 
 func init() {
 	client, err := opensearch.NewClient(opensearch.Config{
@@ -29,11 +52,22 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	c = client
+
+	c = &DefaultClient{
+		client,
+	}
+}
+
+type DefaultClient struct {
+	client *opensearch.Client
+}
+
+func GetClient() Client {
+	return c
 }
 
 // Index stores document into opensearch index.
-func Index(indexName string, document Document) error {
+func (dc DefaultClient) Index(indexName string, document Document) error {
 	logger.Debug(
 		"index document",
 		[]logger.F[any]{
@@ -53,7 +87,7 @@ func Index(indexName string, document Document) error {
 		return jsonErr
 	}
 
-	_, indexErr := c.Index(indexName, bytes.NewReader(documentJson))
+	_, indexErr := c.client.Index(indexName, bytes.NewReader(documentJson))
 	if indexErr != nil {
 		return indexErr
 	}
@@ -61,7 +95,7 @@ func Index(indexName string, document Document) error {
 	return nil
 }
 
-func Search(indexNames []string, query Query) (Response, error) {
+func (dc DefaultClient) Search(indexNames []string, query Query) (Response, error) {
 	logger.Debug(
 		"search index",
 		[]logger.F[any]{
@@ -76,7 +110,7 @@ func Search(indexNames []string, query Query) (Response, error) {
 		},
 	)
 
-	searchResponse, searchErr := c.Search(
+	searchResponse, searchErr := c.client.Search(
 		func(req *opensearchapi.SearchRequest) {
 			req.Index = indexNames
 			req.Body = strings.NewReader(query.String())
@@ -94,7 +128,7 @@ func Search(indexNames []string, query Query) (Response, error) {
 	return response, nil
 }
 
-func CreateKnnIndex(indexName string) error {
+func (dc DefaultClient) CreateKnnIndex(indexName string) error {
 	indexConfig := KNNIndexConfig{
 		Settings: Settings{
 			Index: IndexSettings{
@@ -129,7 +163,7 @@ func CreateKnnIndex(indexName string) error {
 		return err
 	}
 
-	createIndexResponse, err := c.Indices.Create(
+	createIndexResponse, err := c.client.Indices.Create(
 		indexName,
 		func(req *opensearchapi.IndicesCreateRequest) {
 			req.Body = bytes.NewReader(body)
@@ -146,6 +180,6 @@ func CreateKnnIndex(indexName string) error {
 	return nil
 }
 
-func DeleteIndex(indexName string) error {
+func (dc DefaultClient) DeleteIndex(indexName string) error {
 	panic("Not Implemented yet.")
 }

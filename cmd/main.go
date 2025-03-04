@@ -8,6 +8,7 @@ import (
 	"github.com/yoseplee/rago/config"
 	"github.com/yoseplee/rago/infra"
 	"github.com/yoseplee/rago/infra/logger"
+	"github.com/yoseplee/rago/infra/opensearch"
 	v2 "github.com/yoseplee/rago/v2"
 )
 
@@ -21,7 +22,9 @@ func main() {
 			Dimension: v2.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
 		},
 		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{
-			CollectionName: config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
+			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
+			Indexable:       opensearch.GetClient(),
+			IndexSearchable: opensearch.GetClient(),
 		},
 	}
 
