@@ -24,7 +24,8 @@ func main() {
 		KnowledgeSearchable: v2.OpenSearchKnowledgeBase{},
 	}
 
-	retrieve, err := retriever.Retrieve("大塚製薬　ポカリスエット　500ml（45019517）")
+	item := v2.Document("大塚製薬　ポカリスエット　500ml（45019517）")
+	retrieve, err := retriever.Retrieve(item)
 	if err != nil {
 		panic(err)
 	}
@@ -45,8 +46,9 @@ func main() {
 					documents,
 					scores,
 				)),
-				openai.UserMessage("Please suggest the best alternative for the item [大塚製薬　ポカリスエット　500ml（45019517）]."),
+				openai.UserMessage(fmt.Sprintf("Please suggest the best alternative for the item [%s].", item)),
 				openai.UserMessage("Follow these instructions carefully: Provide the name of the recommended item, explain the reason for each suggestion (do not mention the score), and list up to 5 items as alternatives."),
+				openai.UserMessage("You must exclude the given item from the alternatives."),
 				openai.UserMessage("Note that the user may not be satisfied with your suggestions. Please be cautious with your recommendations."),
 			}),
 			Model: openai.F(openai.ChatModelGPT4o),
