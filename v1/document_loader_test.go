@@ -1,4 +1,4 @@
-package rago
+package v1
 
 import (
 	"fmt"
@@ -7,15 +7,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestJSONLoader_Load(t *testing.T) {
-	loader := JSONLoader{
-		FilePath: "sample_shop_items.json",
+func TestJSONDocumentLoader_Load(t *testing.T) {
+	loader := JSONDocumentLoader{
+		FilePath: "../data/sample_shop_items.json",
 	}
 
 	load, err := loader.Load()
 	if err != nil {
+		t.Error(err)
 		t.Fail()
 	}
+
+	fmt.Println(load)
 	assert.Equal(t, jsonResult, fmt.Sprintf("%v", load))
 }
 
