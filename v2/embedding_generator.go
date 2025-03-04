@@ -47,7 +47,7 @@ func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, err
 		if dimension != 0 && e.Dimension() != dimension {
 			logger.Warn(
 				"possible incorrect embedding found",
-				[]logger.LogField[any]{
+				[]logger.F[any]{
 					{
 						"reason",
 						"dimension mismatch",
@@ -62,7 +62,7 @@ func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, err
 		if e.AllZero() {
 			logger.Warn(
 				"possible incorrect embedding found",
-				[]logger.LogField[any]{
+				[]logger.F[any]{
 					{
 						"reason",
 						"vector is consists of zeros",

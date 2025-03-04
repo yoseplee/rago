@@ -36,7 +36,7 @@ func init() {
 func Index(indexName string, document Document) error {
 	logger.Debug(
 		"index document",
-		[]logger.LogField[any]{
+		[]logger.F[any]{
 			{
 				"indexName",
 				indexName,
@@ -64,7 +64,7 @@ func Index(indexName string, document Document) error {
 func Search(indexNames []string, query Query) (Response, error) {
 	logger.Debug(
 		"search index",
-		[]logger.LogField[any]{
+		[]logger.F[any]{
 			{
 				"index",
 				indexNames,

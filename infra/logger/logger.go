@@ -14,12 +14,12 @@ func SyncLogger() {
 	zl.Sync()
 }
 
-type LogField[T any] struct {
+type F[T any] struct {
 	Key   string
 	Value T
 }
 
-func (l LogField[T]) toZapField() zap.Field {
+func (l F[T]) toZapField() zap.Field {
 	switch any(l.Value).(type) {
 	case int:
 		return zap.Int(l.Key, any(l.Value).(int))
@@ -32,7 +32,7 @@ func (l LogField[T]) toZapField() zap.Field {
 	}
 }
 
-func Debug[T any](message string, logFields []LogField[T]) {
+func Debug[T any](message string, logFields []F[T]) {
 	var fields []zap.Field
 	for _, field := range logFields {
 		fields = append(fields, field.toZapField())
@@ -40,7 +40,7 @@ func Debug[T any](message string, logFields []LogField[T]) {
 	zl.Debug(message, fields...)
 }
 
-func Info[T any](message string, logFields []LogField[T]) {
+func Info[T any](message string, logFields []F[T]) {
 	var fields []zap.Field
 	for _, field := range logFields {
 		fields = append(fields, field.toZapField())
@@ -48,7 +48,7 @@ func Info[T any](message string, logFields []LogField[T]) {
 	zl.Info(message, fields...)
 }
 
-func Warn[T any](message string, logFields []LogField[T]) {
+func Warn[T any](message string, logFields []F[T]) {
 	var fields []zap.Field
 	for _, field := range logFields {
 		fields = append(fields, field.toZapField())
@@ -56,7 +56,7 @@ func Warn[T any](message string, logFields []LogField[T]) {
 	zl.Warn(message, fields...)
 }
 
-func Error[T any](message string, logFields []LogField[T]) {
+func Error[T any](message string, logFields []F[T]) {
 	var fields []zap.Field
 	for _, field := range logFields {
 		fields = append(fields, field.toZapField())

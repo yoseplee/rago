@@ -28,7 +28,7 @@ func (d DefaultRetriever) Retrieve(documents Documents) (Retrieved, error) {
 
 	logger.Debug(
 		"input embedding",
-		[]logger.LogField[any]{
+		[]logger.F[any]{
 			{
 				"documents",
 				documents,
@@ -49,7 +49,7 @@ func (d DefaultRetriever) Retrieve(documents Documents) (Retrieved, error) {
 		for _, r := range searchResult {
 			logger.Debug(
 				"search result",
-				[]logger.LogField[any]{
+				[]logger.F[any]{
 					{
 						"score",
 						r.Score,
