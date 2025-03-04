@@ -37,8 +37,28 @@ func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, err
 	}
 
 	var result []Embedding
+	var dimension Dimension
 	for _, embedding := range embeddings.Data {
 		e := Embedding(embedding.Embedding)
+		if dimension == 0 {
+			dimension = e.Dimension()
+		}
+
+		if dimension != 0 && e.Dimension() != dimension {
+			logger.Warn(
+				"possible incorrect embedding found",
+				[]logger.LogField[any]{
+					{
+						"reason",
+						"dimension mismatch",
+					},
+					{
+						"index",
+						embedding.Index,
+					},
+				},
+			)
+		}
 		if e.AllZero() {
 			logger.Warn(
 				"possible incorrect embedding found",
@@ -54,12 +74,13 @@ func (o OpenAIEmbeddingGenerator) Generate(documents Documents) (Embeddings, err
 				},
 			)
 		}
+
 		result = append(result, e)
 	}
 
 	return Embeddings{
 		ModelName:  ModelName(embeddings.Model),
-		Dimension:  0,
-		Embeddings: nil,
+		Dimension:  dimension,
+		Embeddings: result,
 	}, nil
 }

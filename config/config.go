@@ -17,7 +17,6 @@ func init() {
 		panic(err)
 	}
 
-	fmt.Println(viper.AllSettings())
 	if err := viper.Unmarshal(&Config); err != nil {
 		panic(err)
 	}
