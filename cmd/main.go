@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 
+	"github.com/labstack/echo/v4"
 	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago/config"
 	"github.com/yoseplee/rago/infra/logger"
@@ -14,7 +16,24 @@ import (
 
 func main() {
 	defer logger.SyncLogger()
-	retrieve()
+
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(200, "Hello, World!")
+	})
+
+	e.GET("/retrieve", func(c echo.Context) error {
+		completions, err := retrieve()
+		var jsons []string
+		for _, c := range completions {
+			jsons = append(jsons, c.JSON.RawJSON())
+		}
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+		return c.JSON(http.StatusOK, jsons)
+	})
+	e.Logger.Fatal(e.Start(":1323"))
 }
 
 func ingest() {
@@ -38,7 +57,7 @@ func ingest() {
 	}
 }
 
-func retrieve() {
+func retrieve() ([]*openai.ChatCompletion, error) {
 	retriever := v1.DefaultRetriever{
 		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
@@ -69,10 +88,11 @@ func retrieve() {
 				},
 			},
 		)
-		return
+		return nil, err
 	}
 
 	fmt.Printf("Retrieved %d documents\n", len(retrieved))
+	var chatCompletions []*openai.ChatCompletion
 	for i, result := range retrieved {
 		documents := result.Documents()
 		scores := result.Scores()
@@ -96,5 +116,7 @@ func retrieve() {
 		}
 
 		fmt.Println(chatCompletion.Choices[0].Message.Content)
+		chatCompletions = append(chatCompletions, chatCompletion)
 	}
+	return chatCompletions, nil
 }
