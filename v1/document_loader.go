@@ -10,11 +10,17 @@ type DocumentLoader interface {
 	Load() (Documents, error)
 }
 
-// TestDocumentLoader always loads a specific documents for test purpose.
-type TestDocumentLoader struct{}
+// StringDocumentLoader always loads a specific documents for test purpose.
+type StringDocumentLoader struct {
+	Strings []string
+}
 
-func (t TestDocumentLoader) Load() (Documents, error) {
-	return []Document{}, nil
+func (t StringDocumentLoader) Load() (Documents, error) {
+	var documents Documents
+	for _, param := range t.Strings {
+		documents = append(documents, Document(param))
+	}
+	return documents, nil
 }
 
 // JSONDocumentLoader implements the DocumentLoader interface to load data from a JSON file.

@@ -63,7 +63,9 @@ func ingest(c echo.Context) error {
 	indexName := c.Param("indexName")
 
 	ingester := v1.DefaultIngester{
-		DocumentLoader:    v1.JSONDocumentLoader{FilePath: "data/sample_shop_items.json"},
+		DocumentLoader: v1.StringDocumentLoader{
+			Strings: []string{},
+		},
 		DocumentModifiers: nil,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 			ModelName:            v1.ModelName(config.Config.Ingesters["default"].EmbeddingGenerator.Model),
