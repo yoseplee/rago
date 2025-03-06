@@ -25,14 +25,16 @@ func main() {
 
 	// index name will be an identifier for this app.
 	e.GET("/", getHelloWorld)
-	e.GET("/healthCheck", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
-	})
+	e.GET("/healthCheck", healthCheck)
 	e.POST("/index/knn/:indexName", createKnnIndex)
 	e.GET("/retrieve/:indexName", retrieve)
 	e.POST("/ingest/:indexName/:itemName", ingest)
 	// start the echo server.
 	e.Logger.Fatal(e.Start(":1323"))
+}
+
+var healthCheck = func(c echo.Context) error {
+	return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 }
 
 var getHelloWorld = func(c echo.Context) error {
