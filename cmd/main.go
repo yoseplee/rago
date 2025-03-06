@@ -18,6 +18,10 @@ type CommonResponse struct {
 	Message string `json:"message"`
 }
 
+type IngestRequest struct {
+	Document string `json:"document"`
+}
+
 func main() {
 	defer logger.SyncLogger()
 
@@ -27,8 +31,9 @@ func main() {
 	e.GET("/", getHelloWorld)
 	e.GET("/healthCheck", healthCheck)
 	e.POST("/index/knn/:indexName", createKnnIndex)
-	e.GET("/retrieve/:indexName", retrieve)
-	e.POST("/ingest/:indexName/:itemName", ingest)
+	e.GET("/retrieve/:indexName/:itemName", retrieve)
+	e.POST("/ingest/:indexName", ingest)
+
 	// start the echo server.
 	e.Logger.Fatal(e.Start(":1323"))
 }
@@ -61,10 +66,18 @@ var createKnnIndex = func(c echo.Context) error {
 
 func ingest(c echo.Context) error {
 	indexName := c.Param("indexName")
+	req := IngestRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
+	}
+
+	fmt.Printf(req.Document)
 
 	ingester := v1.DefaultIngester{
 		DocumentLoader: v1.StringDocumentLoader{
-			Strings: []string{},
+			Strings: []string{
+				req.Document,
+			},
 		},
 		DocumentModifiers: nil,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
