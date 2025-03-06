@@ -49,7 +49,6 @@ func IngestSimilarItem(c echo.Context) error {
 
 func RetrieveSimilarItems(c echo.Context) error {
 	indexName := c.Param("indexName")
-
 	req := RetrieveRequest{}
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
