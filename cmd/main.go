@@ -14,6 +14,10 @@ import (
 	"github.com/yoseplee/rago/v1"
 )
 
+type CommonResponse struct {
+	Message string `json:"message"`
+}
+
 func main() {
 	defer logger.SyncLogger()
 
@@ -22,8 +26,17 @@ func main() {
 	// index name will be an identifier for this app.
 	e.GET("/", getHelloWorld)
 
+	e.POST("/index/knn/:indexName", func(c echo.Context) error {
+		// create kNN index
+		indexName := c.Param("indexName")
+		if err := opensearch.GetClient().CreateKnnIndex(indexName); err != nil {
+			return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
+		}
+		return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
+	})
+
 	e.GET("/healthCheck", func(c echo.Context) error {
-		return c.String(http.StatusOK, "OK")
+		return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 	})
 
 	e.GET("/retrieve/:indexName", retrieve)
@@ -35,7 +48,7 @@ func main() {
 }
 
 var getHelloWorld = func(c echo.Context) error {
-	return c.String(200, "Hello, World!")
+	return c.JSON(http.StatusOK, CommonResponse{Message: "hello world"})
 }
 
 func ingest(c echo.Context) error {
@@ -60,7 +73,7 @@ func ingest(c echo.Context) error {
 		panic(err)
 	}
 
-	return c.JSON(http.StatusOK, "OK")
+	return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 }
 
 func retrieve(c echo.Context) error {
@@ -94,7 +107,7 @@ func retrieve(c echo.Context) error {
 				},
 			},
 		)
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
 	}
 
 	fmt.Printf("Retrieved %d documents\n", len(retrieved))
@@ -124,5 +137,5 @@ func retrieve(c echo.Context) error {
 		chatCompletions = append(chatCompletions, chatCompletion.Choices[0].Message.Content)
 	}
 
-	return c.JSON(http.StatusOK, chatCompletions)
+	return c.JSON(http.StatusOK, CommonResponse{Message: fmt.Sprintf("%v", chatCompletions)})
 }
