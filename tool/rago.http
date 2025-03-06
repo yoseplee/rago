@@ -1,0 +1,37 @@
+### Retrieve results
+GET localhost:1323/retrieve/sim-search-yours
+Content-Type: application/json
+
+{
+  "query": ""
+}
+
+### Ingest document
+POST localhost:1323/ingest/sim-search-yours
+Content-Type: application/json
+
+{
+  "document": ""
+}
+
+
+### Retrieve similiar items
+GET localhost:1323/retrieve/similar/item/sim-search-test
+Content-Type: application/json
+
+{
+  "query": "大塚製薬　ポカリスエット　500ml（45019517）"
+}
+
+### Ingest shop items
+POST localhost:1323/ingest/similar/item/sim-search-test
+Content-Type: application/json
+
+{
+    "document": ""
+}
+
+### Create kNN index
+POST localhost:1323/index/knn/sim-search-yours
+
+{}
