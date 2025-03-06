@@ -28,7 +28,7 @@ func main() {
 
 	e.GET("/retrieve/:indexName", retrieve)
 
-	e.POST("/ingest/:indexName", ingest)
+	e.POST("/ingest/:indexName/:itemName", ingest)
 
 	// start the echo server.
 	e.Logger.Fatal(e.Start(":1323"))
@@ -65,6 +65,7 @@ func ingest(c echo.Context) error {
 
 func retrieve(c echo.Context) error {
 	indexName := c.Param("indexName")
+	itemName := c.Param("itemName")
 
 	retriever := v1.DefaultRetriever{
 		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
@@ -80,15 +81,12 @@ func retrieve(c echo.Context) error {
 		},
 	}
 
-	items := []v1.Document{
-		"大塚製薬　ポカリスエット　500ml（45019517）",
-		"アンシャンテ メイクアップスポンジ 三角タイプ 38個（4540474777979）",
-	}
+	items := []v1.Document{v1.Document(itemName)}
 
 	retrieved, err := retriever.Retrieve(items)
 	if err != nil {
 		logger.Error(
-			"failed to retrive documents",
+			"failed to retrieve documents",
 			[]logger.F[any]{
 				{
 					"err",
