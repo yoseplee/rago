@@ -3,7 +3,8 @@ GET localhost:1323/retrieve/sim-search-yours
 Content-Type: application/json
 
 {
-  "query": ""
+  "query": "",
+  "message": "Find the best alternatives for the input query (...) You must not include the input query in the result."
 }
 
 ### Ingest document
