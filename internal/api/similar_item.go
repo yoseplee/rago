@@ -1,33 +1,44 @@
-package main
+package api
 
 import (
 	"context"
 	"fmt"
+	"net/http"
 
+	"github.com/labstack/echo/v4"
 	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago/config"
 	"github.com/yoseplee/rago/infra/logger"
-	openai2 "github.com/yoseplee/rago/infra/openai"
+	. "github.com/yoseplee/rago/infra/openai"
 	"github.com/yoseplee/rago/infra/opensearch"
-	"github.com/yoseplee/rago/v1"
+	v1 "github.com/yoseplee/rago/v1"
 )
 
-func main() {
-	defer logger.SyncLogger()
-	retrieve()
-}
+func IngestSimilarItem(c echo.Context) error {
+	indexName := c.Param("indexName")
+	req := IngestRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
+	}
 
-func ingest() {
+	if len(req.Documents) == 0 {
+		return c.JSON(http.StatusBadRequest, CommonResponse{
+			Message: "documents is empty",
+		})
+	}
+
 	ingester := v1.DefaultIngester{
-		DocumentLoader:    v1.JSONDocumentLoader{FilePath: "data/sample_shop_items.json"},
+		DocumentLoader: v1.StringDocumentLoader{
+			Strings: req.Documents,
+		},
 		DocumentModifiers: nil,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 			ModelName:            v1.ModelName(config.Config.Ingesters["default"].EmbeddingGenerator.Model),
 			Dimension:            v1.Dimension(config.Config.Ingesters["default"].EmbeddingGenerator.Dimension),
-			EmbeddingGeneratable: openai2.OpenAIClient,
+			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeAddable: v1.OpenSearchKnowledgeBase{
-			CollectionName:  config.Config.Ingesters["default"].KnowledgeBaseAdd.Collection,
+			CollectionName:  indexName,
 			Indexable:       opensearch.GetClient(),
 			IndexSearchable: opensearch.GetClient(),
 		},
@@ -36,32 +47,37 @@ func ingest() {
 	if err := ingester.Ingest(); err != nil {
 		panic(err)
 	}
+
+	return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 }
 
-func retrieve() {
+func RetrieveSimilarItems(c echo.Context) error {
+	indexName := c.Param("indexName")
+	req := RetrieveRequest{}
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
+	}
+
 	retriever := v1.DefaultRetriever{
 		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 			ModelName:            v1.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
 			Dimension:            v1.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
-			EmbeddingGeneratable: openai2.OpenAIClient,
+			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeSearchable: v1.OpenSearchKnowledgeBase{
-			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
+			CollectionName:  indexName,
 			Indexable:       opensearch.GetClient(),
 			IndexSearchable: opensearch.GetClient(),
 		},
 	}
 
-	items := []v1.Document{
-		"大塚製薬　ポカリスエット　500ml（45019517）",
-		"アンシャンテ メイクアップスポンジ 三角タイプ 38個（4540474777979）",
-	}
+	items := []v1.Document{v1.Document(req.Query)}
 
 	retrieved, err := retriever.Retrieve(items)
 	if err != nil {
 		logger.Error(
-			"failed to retrive documents",
+			"failed to retrieve documents",
 			[]logger.F[any]{
 				{
 					"err",
@@ -69,15 +85,15 @@ func retrieve() {
 				},
 			},
 		)
-		return
+		return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
 	}
 
-	fmt.Printf("Retrieved %d documents\n", len(retrieved))
+	var chatCompletions []string
 	for i, result := range retrieved {
 		documents := result.Documents()
 		scores := result.Scores()
 
-		chatCompletion, err := openai2.LinecorpOpenAIClient.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+		chatCompletion, err := LinecorpOpenAIClient.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 				openai.UserMessage(fmt.Sprintf(
 					"Here are some context documents retrieved from our Vector Database: [%+v]. These documents are potential candidates. Each candidate has a relevance score between 0 and 1: [%+v].",
@@ -95,6 +111,8 @@ func retrieve() {
 			panic(err.Error())
 		}
 
-		fmt.Println(chatCompletion.Choices[0].Message.Content)
+		chatCompletions = append(chatCompletions, chatCompletion.Choices[0].Message.Content)
 	}
+
+	return c.JSON(http.StatusOK, CommonResponse{Message: fmt.Sprintf("%v", chatCompletions)})
 }

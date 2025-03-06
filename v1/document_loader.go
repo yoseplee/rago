@@ -10,20 +10,26 @@ type DocumentLoader interface {
 	Load() (Documents, error)
 }
 
-// TestDocumentLoader always loads a specific documents for test purpose.
-type TestDocumentLoader struct{}
-
-func (t TestDocumentLoader) Load() (Documents, error) {
-	return []Document{}, nil
+// StringDocumentLoader always loads a specific documents for test purpose.
+type StringDocumentLoader struct {
+	Strings []string
 }
 
-// JSONDocumentLoader implements the DocumentLoader interface to load data from a JSON file.
+func (t StringDocumentLoader) Load() (Documents, error) {
+	var documents Documents
+	for _, param := range t.Strings {
+		documents = append(documents, Document(param))
+	}
+	return documents, nil
+}
+
+// JSONFileDocumentLoader implements the DocumentLoader interface to load data from a JSON file.
 // The JSON file must contain an array of JSON objects, each representing a Document.
-type JSONDocumentLoader struct {
+type JSONFileDocumentLoader struct {
 	FilePath string
 }
 
-func (j JSONDocumentLoader) Load() (Documents, error) {
+func (j JSONFileDocumentLoader) Load() (Documents, error) {
 	file, readFileErr := os.ReadFile(j.FilePath)
 	if readFileErr != nil {
 		return nil, readFileErr
