@@ -9,7 +9,7 @@ import (
 	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago/config"
 	"github.com/yoseplee/rago/infra/logger"
-	openai2 "github.com/yoseplee/rago/infra/openai"
+	. "github.com/yoseplee/rago/infra/openai"
 	"github.com/yoseplee/rago/infra/opensearch"
 	"github.com/yoseplee/rago/v1"
 )
@@ -43,7 +43,7 @@ func ingest() {
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 			ModelName:            v1.ModelName(config.Config.Ingesters["default"].EmbeddingGenerator.Model),
 			Dimension:            v1.Dimension(config.Config.Ingesters["default"].EmbeddingGenerator.Dimension),
-			EmbeddingGeneratable: openai2.OpenAIClient,
+			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeAddable: v1.OpenSearchKnowledgeBase{
 			CollectionName:  config.Config.Ingesters["default"].KnowledgeBaseAdd.Collection,
@@ -63,7 +63,7 @@ func retrieve() ([]*openai.ChatCompletion, error) {
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 			ModelName:            v1.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
 			Dimension:            v1.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
-			EmbeddingGeneratable: openai2.OpenAIClient,
+			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeSearchable: v1.OpenSearchKnowledgeBase{
 			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
@@ -97,7 +97,7 @@ func retrieve() ([]*openai.ChatCompletion, error) {
 		documents := result.Documents()
 		scores := result.Scores()
 
-		chatCompletion, err := openai2.LinecorpOpenAIClient.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+		chatCompletion, err := LinecorpOpenAIClient.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
 			Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 				openai.UserMessage(fmt.Sprintf(
 					"Here are some context documents retrieved from our Vector Database: [%+v]. These documents are potential candidates. Each candidate has a relevance score between 0 and 1: [%+v].",
