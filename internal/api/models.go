@@ -9,5 +9,6 @@ type IngestRequest struct {
 }
 
 type RetrieveRequest struct {
-	Query string `json:"query" query:"query"`
+	Query   string `json:"query" query:"query"`
+	Message string `json:"message" query:"message"`
 }
