@@ -19,9 +19,18 @@ func main() {
 
 	e := echo.New()
 
+	// index name will be an identifier for this app.
 	e.GET("/", getHelloWorld)
 
-	e.GET("/retrieve", getSample)
+	e.GET("/healthCheck", func(c echo.Context) error {
+		return c.String(http.StatusOK, "OK")
+	})
+
+	e.GET("/retrieve/:indexName", retrieve)
+
+	e.POST("/ingest/:indexName", ingest)
+
+	// start the echo server.
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
@@ -29,19 +38,9 @@ var getHelloWorld = func(c echo.Context) error {
 	return c.String(200, "Hello, World!")
 }
 
-var getSample = func(c echo.Context) error {
-	completions, err := retrieve()
-	var jsons []string
-	for _, c := range completions {
-		jsons = append(jsons, c.JSON.RawJSON())
-	}
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
-	}
-	return c.JSON(http.StatusOK, jsons)
-}
+func ingest(c echo.Context) error {
+	indexName := c.Param("indexName")
 
-func ingest() {
 	ingester := v1.DefaultIngester{
 		DocumentLoader:    v1.JSONDocumentLoader{FilePath: "data/sample_shop_items.json"},
 		DocumentModifiers: nil,
@@ -51,7 +50,7 @@ func ingest() {
 			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeAddable: v1.OpenSearchKnowledgeBase{
-			CollectionName:  config.Config.Ingesters["default"].KnowledgeBaseAdd.Collection,
+			CollectionName:  indexName,
 			Indexable:       opensearch.GetClient(),
 			IndexSearchable: opensearch.GetClient(),
 		},
@@ -60,9 +59,13 @@ func ingest() {
 	if err := ingester.Ingest(); err != nil {
 		panic(err)
 	}
+
+	return c.JSON(http.StatusOK, "OK")
 }
 
-func retrieve() ([]*openai.ChatCompletion, error) {
+func retrieve(c echo.Context) error {
+	indexName := c.Param("indexName")
+
 	retriever := v1.DefaultRetriever{
 		TopK: config.Config.Retrievers["default"].KnowledgeBaseSearch.TopK,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
@@ -71,7 +74,7 @@ func retrieve() ([]*openai.ChatCompletion, error) {
 			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeSearchable: v1.OpenSearchKnowledgeBase{
-			CollectionName:  config.Config.Retrievers["default"].KnowledgeBaseSearch.Collection,
+			CollectionName:  indexName,
 			Indexable:       opensearch.GetClient(),
 			IndexSearchable: opensearch.GetClient(),
 		},
@@ -93,11 +96,11 @@ func retrieve() ([]*openai.ChatCompletion, error) {
 				},
 			},
 		)
-		return nil, err
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	fmt.Printf("Retrieved %d documents\n", len(retrieved))
-	var chatCompletions []*openai.ChatCompletion
+	var chatCompletions []string
 	for i, result := range retrieved {
 		documents := result.Documents()
 		scores := result.Scores()
@@ -120,8 +123,8 @@ func retrieve() ([]*openai.ChatCompletion, error) {
 			panic(err.Error())
 		}
 
-		fmt.Println(chatCompletion.Choices[0].Message.Content)
-		chatCompletions = append(chatCompletions, chatCompletion)
+		chatCompletions = append(chatCompletions, chatCompletion.Choices[0].Message.Content)
 	}
-	return chatCompletions, nil
+
+	return c.JSON(http.StatusOK, chatCompletions)
 }
