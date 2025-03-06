@@ -25,30 +25,36 @@ func main() {
 
 	// index name will be an identifier for this app.
 	e.GET("/", getHelloWorld)
-
-	e.POST("/index/knn/:indexName", func(c echo.Context) error {
-		// create kNN index
-		indexName := c.Param("indexName")
-		if err := opensearch.GetClient().CreateKnnIndex(indexName); err != nil {
-			return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
-		}
-		return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
-	})
-
 	e.GET("/healthCheck", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 	})
-
+	e.POST("/index/knn/:indexName", createKnnIndex)
 	e.GET("/retrieve/:indexName", retrieve)
-
 	e.POST("/ingest/:indexName/:itemName", ingest)
-
 	// start the echo server.
 	e.Logger.Fatal(e.Start(":1323"))
 }
 
 var getHelloWorld = func(c echo.Context) error {
 	return c.JSON(http.StatusOK, CommonResponse{Message: "hello world"})
+}
+
+var createKnnIndex = func(c echo.Context) error {
+	indexName := c.Param("indexName")
+	if err := opensearch.GetClient().CreateKnnIndex(indexName); err != nil {
+		return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
+	}
+
+	logger.Info(
+		"create knn index",
+		[]logger.F[any]{
+			{
+				"indexName",
+				indexName,
+			},
+		},
+	)
+	return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 }
 
 func ingest(c echo.Context) error {
