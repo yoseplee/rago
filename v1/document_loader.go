@@ -23,13 +23,13 @@ func (t StringDocumentLoader) Load() (Documents, error) {
 	return documents, nil
 }
 
-// JSONDocumentLoader implements the DocumentLoader interface to load data from a JSON file.
+// JSONFileDocumentLoader implements the DocumentLoader interface to load data from a JSON file.
 // The JSON file must contain an array of JSON objects, each representing a Document.
-type JSONDocumentLoader struct {
+type JSONFileDocumentLoader struct {
 	FilePath string
 }
 
-func (j JSONDocumentLoader) Load() (Documents, error) {
+func (j JSONFileDocumentLoader) Load() (Documents, error) {
 	file, readFileErr := os.ReadFile(j.FilePath)
 	if readFileErr != nil {
 		return nil, readFileErr

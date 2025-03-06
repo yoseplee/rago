@@ -8,7 +8,7 @@ import (
 )
 
 func TestJSONDocumentLoader_Load(t *testing.T) {
-	loader := JSONDocumentLoader{
+	loader := JSONFileDocumentLoader{
 		FilePath: "../data/sample_shop_items.json",
 	}
 
