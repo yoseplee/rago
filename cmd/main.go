@@ -18,22 +18,27 @@ func main() {
 	defer logger.SyncLogger()
 
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(200, "Hello, World!")
-	})
 
-	e.GET("/retrieve", func(c echo.Context) error {
-		completions, err := retrieve()
-		var jsons []string
-		for _, c := range completions {
-			jsons = append(jsons, c.JSON.RawJSON())
-		}
-		if err != nil {
-			return c.JSON(http.StatusInternalServerError, err.Error())
-		}
-		return c.JSON(http.StatusOK, jsons)
-	})
+	e.GET("/", getHelloWorld)
+
+	e.GET("/retrieve", getSample)
 	e.Logger.Fatal(e.Start(":1323"))
+}
+
+var getHelloWorld = func(c echo.Context) error {
+	return c.String(200, "Hello, World!")
+}
+
+var getSample = func(c echo.Context) error {
+	completions, err := retrieve()
+	var jsons []string
+	for _, c := range completions {
+		jsons = append(jsons, c.JSON.RawJSON())
+	}
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, jsons)
 }
 
 func ingest() {
