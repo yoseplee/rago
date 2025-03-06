@@ -6,10 +6,10 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	openai2 "github.com/openai/openai-go"
+	"github.com/openai/openai-go"
 	"github.com/yoseplee/rago/config"
 	"github.com/yoseplee/rago/infra/logger"
-	"github.com/yoseplee/rago/infra/openai"
+	. "github.com/yoseplee/rago/infra/openai"
 	"github.com/yoseplee/rago/infra/opensearch"
 	"github.com/yoseplee/rago/v1"
 )
@@ -57,7 +57,7 @@ func Ingest(c echo.Context) error {
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 			ModelName:            v1.ModelName(config.Config.Ingesters["default"].EmbeddingGenerator.Model),
 			Dimension:            v1.Dimension(config.Config.Ingesters["default"].EmbeddingGenerator.Dimension),
-			EmbeddingGeneratable: openai.OpenAIClient,
+			EmbeddingGeneratable: OpenAIClient,
 		},
 		KnowledgeAddable: v1.OpenSearchKnowledgeBase{
 			CollectionName:  indexName,
@@ -87,7 +87,7 @@ func Retrieve(c echo.Context) error {
 			EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{
 				ModelName:            v1.ModelName(config.Config.Retrievers["default"].EmbeddingGenerator.Model),
 				Dimension:            v1.Dimension(config.Config.Retrievers["default"].EmbeddingGenerator.Dimension),
-				EmbeddingGeneratable: openai.OpenAIClient,
+				EmbeddingGeneratable: OpenAIClient,
 			},
 			KnowledgeSearchable: v1.OpenSearchKnowledgeBase{
 				CollectionName:  indexName,
@@ -117,19 +117,19 @@ func Retrieve(c echo.Context) error {
 			documents := result.Documents()
 			scores := result.Scores()
 
-			chatCompletion, err := openai.LinecorpOpenAIClient.Client.Chat.Completions.New(context.TODO(), openai2.ChatCompletionNewParams{
-				Messages: openai2.F([]openai2.ChatCompletionMessageParamUnion{
-					openai2.UserMessage(fmt.Sprintf(
+			chatCompletion, err := LinecorpOpenAIClient.Client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
+				Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+					openai.UserMessage(fmt.Sprintf(
 						"Here are some context documents retrieved from our Vector Database: [%+v]. These documents are potential candidates. Each candidate has a relevance score between 0 and 1: [%+v].",
 						documents,
 						scores,
 					)),
-					openai2.UserMessage(fmt.Sprintf("Please suggest the best alternative for the item [%s].", items[i])),
-					openai2.UserMessage("Follow these instructions carefully: Provide the name of the recommended item, explain the reason for each suggestion (do not mention the score), and list up to 5 items as alternatives."),
-					openai2.UserMessage("You must exclude the given item from the alternatives."),
-					openai2.UserMessage("Note that the user may not be satisfied with your suggestions. Please be cautious with your recommendations."),
+					openai.UserMessage(fmt.Sprintf("Please suggest the best alternative for the item [%s].", items[i])),
+					openai.UserMessage("Follow these instructions carefully: Provide the name of the recommended item, explain the reason for each suggestion (do not mention the score), and list up to 5 items as alternatives."),
+					openai.UserMessage("You must exclude the given item from the alternatives."),
+					openai.UserMessage("Note that the user may not be satisfied with your suggestions. Please be cautious with your recommendations."),
 				}),
-				Model: openai2.F(openai2.ChatModelGPT4o),
+				Model: openai.F(openai.ChatModelGPT4o),
 			})
 			if err != nil {
 				panic(err.Error())
