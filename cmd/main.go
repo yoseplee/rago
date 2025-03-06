@@ -75,8 +75,6 @@ func ingest(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
 	}
 
-	fmt.Printf(req.Document)
-
 	ingester := v1.DefaultIngester{
 		DocumentLoader: v1.StringDocumentLoader{
 			Strings: []string{
@@ -110,7 +108,6 @@ func retrieve(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
 	}
-	fmt.Printf(req.Query)
 
 	if false {
 		retriever := v1.DefaultRetriever{
@@ -143,7 +140,6 @@ func retrieve(c echo.Context) error {
 			return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
 		}
 
-		fmt.Printf("Retrieved %d documents\n", len(retrieved))
 		var chatCompletions []string
 		for i, result := range retrieved {
 			documents := result.Documents()
