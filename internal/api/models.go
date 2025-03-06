@@ -5,7 +5,7 @@ type CommonResponse struct {
 }
 
 type IngestRequest struct {
-	Document string `json:"document"`
+	Documents []string `json:"documents"`
 }
 
 type RetrieveRequest struct {

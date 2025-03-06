@@ -21,11 +21,15 @@ func IngestSimilarItem(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, CommonResponse{Message: err.Error()})
 	}
 
+	if len(req.Documents) == 0 {
+		return c.JSON(http.StatusBadRequest, CommonResponse{
+			Message: "documents is empty",
+		})
+	}
+
 	ingester := v1.DefaultIngester{
 		DocumentLoader: v1.StringDocumentLoader{
-			Strings: []string{
-				req.Document,
-			},
+			Strings: req.Documents,
 		},
 		DocumentModifiers: nil,
 		EmbeddingGenerator: v1.OpenAIEmbeddingGenerator{

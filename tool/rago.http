@@ -11,7 +11,9 @@ POST localhost:1323/ingest/sim-search-yours
 Content-Type: application/json
 
 {
-  "document": ""
+  "documents": [
+
+  ]
 }
 
 
@@ -28,7 +30,9 @@ POST localhost:1323/ingest/similar/item/sim-search-test
 Content-Type: application/json
 
 {
-    "document": ""
+    "documents": [
+
+    ]
 }
 
 ### Create kNN index
