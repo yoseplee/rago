@@ -36,6 +36,20 @@
             padding: 10px;
             border: 1px solid #ccc;
         }
+        .spinner {
+            display: none;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -49,6 +63,7 @@
     <input type="text" id="query" placeholder="Enter query">
     <button onclick="retrieveDocuments()">Retrieve</button>
     <div id="retrieveResult" class="result"></div>
+    <div class="spinner" id="spinner"></div>
 </div>
 
 <div class="container">
@@ -60,17 +75,26 @@
     const baseUrl = 'http://localhost:1323';
 
     async function retrieveDocuments() {
-    const indexName = document.getElementById('retrieveIndexName').value;
-    const query = document.getElementById('query').value;
-    const response = await fetch(`${baseUrl}/retrieve/${indexName}?query=${encodeURIComponent(query)}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
+        const indexName = document.getElementById('retrieveIndexName').value;
+        const query = document.getElementById('query').value;
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block';
+
+        try {
+            const response = await fetch(`${baseUrl}/retrieve/${indexName}?query=${encodeURIComponent(query)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const result = await response.json();
+            document.getElementById('retrieveResult').innerText = JSON.stringify(result);
+        } catch (error) {
+            console.error('Error retrieving documents:', error);
+        } finally {
+            spinner.style.display = 'none';
         }
-    });
-    const result = await response.json();
-    document.getElementById('retrieveResult').innerText = JSON.stringify(result);
-}
+    }
 
     function goToCreateKnnIndex() {
         window.location.href = 'createKnnIndex.html';
