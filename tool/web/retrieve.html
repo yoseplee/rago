@@ -59,8 +59,10 @@
     <h2>Retrieve Documents</h2>
     <label for="retrieveIndexName">Index Name:</label>
     <input type="text" id="retrieveIndexName" placeholder="Enter index name">
-    <label for="query">Query:</label>
+    <label for="query">Query (for taking similar items from vector database):</label>
     <input type="text" id="query" placeholder="Enter query">
+    <label for="message">Message (for prompting to the LLM model):</label>
+    <input type="text" id="message" placeholder="Enter message">
     <button onclick="retrieveDocuments()">Retrieve</button>
     <div id="retrieveResult" class="result"></div>
     <div class="spinner" id="spinner"></div>
@@ -77,15 +79,17 @@
     async function retrieveDocuments() {
         const indexName = document.getElementById('retrieveIndexName').value;
         const query = document.getElementById('query').value;
+        const message = document.getElementById('message').value;
         const spinner = document.getElementById('spinner');
         spinner.style.display = 'block';
 
         try {
-            const response = await fetch(`${baseUrl}/retrieve/${indexName}?query=${encodeURIComponent(query)}`, {
-                method: 'GET',
+            const response = await fetch(`${baseUrl}/retrieve/${indexName}`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ query, message })
             });
             const result = await response.json();
             document.getElementById('retrieveResult').innerText = JSON.stringify(result);
