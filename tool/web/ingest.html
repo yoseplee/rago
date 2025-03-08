@@ -27,6 +27,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            margin-bottom: 10px;
         }
         button:hover {
             background-color: #0056b3;
@@ -47,6 +48,20 @@
         .document-item button {
             margin-left: 10px;
         }
+        .spinner {
+            display: none;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -58,8 +73,10 @@
     <input type="text" id="ingestIndexName" placeholder="Enter index name">
     <div id="documentsContainer"></div>
     <button onclick="addDocument()">Add Document</button>
+    <br>
     <button onclick="ingestDocuments()">Ingest</button>
     <div id="ingestResult" class="result"></div>
+    <div class="spinner" id="spinner"></div>
 </div>
 
 <div class="container">
@@ -75,7 +92,7 @@
         const documentItem = document.createElement('div');
         documentItem.className = 'document-item';
         documentItem.innerHTML = `
-            <textarea placeholder="Enter document content"></textarea>
+            <textarea placeholder="Put your document here"></textarea>
             <button onclick="removeDocument(this)">Remove</button>
         `;
         container.appendChild(documentItem);
@@ -89,15 +106,30 @@
     async function ingestDocuments() {
         const indexName = document.getElementById('ingestIndexName').value;
         const documents = Array.from(document.querySelectorAll('#documentsContainer textarea')).map(textarea => textarea.value);
-        const response = await fetch(`${baseUrl}/ingest/${indexName}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ documents })
-        });
-        const result = await response.json();
-        document.getElementById('ingestResult').innerText = JSON.stringify(result);
+
+        if (documents.some(doc => doc.trim() === "")) {
+            alert("Please fill in all document fields before ingesting.");
+            return;
+        }
+
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block';
+
+        try {
+            const response = await fetch(`${baseUrl}/ingest/${indexName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ documents })
+            });
+            const result = await response.json();
+            document.getElementById('ingestResult').innerText = JSON.stringify(result);
+        } catch (error) {
+            console.error('Error ingesting documents:', error);
+        } finally {
+            spinner.style.display = 'none';
+        }
     }
 
     function goToCreateKnnIndex() {
@@ -107,6 +139,11 @@
     function goToRetrieve() {
         window.location.href = 'retrieve.html';
     }
+
+    // Add an empty document input field when the page loads
+    window.onload = function() {
+        addDocument();
+    };
 </script>
 </body>
 </html>
