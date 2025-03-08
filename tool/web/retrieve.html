@@ -60,18 +60,17 @@
     const baseUrl = 'http://localhost:1323';
 
     async function retrieveDocuments() {
-        const indexName = document.getElementById('retrieveIndexName').value;
-        const query = document.getElementById('query').value;
-        const response = await fetch(`${baseUrl}/retrieve/${indexName}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ query })
-        });
-        const result = await response.json();
-        document.getElementById('retrieveResult').innerText = JSON.stringify(result);
-    }
+    const indexName = document.getElementById('retrieveIndexName').value;
+    const query = document.getElementById('query').value;
+    const response = await fetch(`${baseUrl}/retrieve/${indexName}?query=${encodeURIComponent(query)}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const result = await response.json();
+    document.getElementById('retrieveResult').innerText = JSON.stringify(result);
+}
 
     function goToCreateKnnIndex() {
         window.location.href = 'createKnnIndex.html';

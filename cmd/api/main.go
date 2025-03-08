@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/yoseplee/rago/infra/logger"
 	"github.com/yoseplee/rago/internal/api"
 )
@@ -10,6 +11,7 @@ func main() {
 	defer logger.SyncLogger()
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 
 	e.GET("/", api.GetHelloWorld)
 	e.GET("/healthCheck", api.HealthCheck)
