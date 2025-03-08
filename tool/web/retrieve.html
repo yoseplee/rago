@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rago API Web App - Retrieve</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<h1>Rago API Web App - Retrieve</h1>
+
+<div class="container">
+    <h2>Retrieve Documents</h2>
+    <label for="retrieveIndexName">Index Name:</label>
+    <input type="text" id="retrieveIndexName" placeholder="Enter index name">
+    <label for="query">Query:</label>
+    <input type="text" id="query" placeholder="Enter query">
+    <button onclick="retrieveDocuments()">Retrieve</button>
+    <div id="retrieveResult" class="result"></div>
+</div>
+
+<div class="container">
+    <button onclick="goToCreateKnnIndex()">Go to Create kNN Index</button>
+    <button onclick="goToIngest()">Go to Ingest</button>
+</div>
+
+<script>
+    const baseUrl = 'http://localhost:1323';
+
+    async function retrieveDocuments() {
+        const indexName = document.getElementById('retrieveIndexName').value;
+        const query = document.getElementById('query').value;
+        const response = await fetch(`${baseUrl}/retrieve/${indexName}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query })
+        });
+        const result = await response.json();
+        document.getElementById('retrieveResult').innerText = JSON.stringify(result);
+    }
+
+    function goToCreateKnnIndex() {
+        window.location.href = 'createKnnIndex.html';
+    }
+
+    function goToIngest() {
+        window.location.href = 'ingest.html';
+    }
+</script>
+</body>
+</html>

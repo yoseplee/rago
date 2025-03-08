@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rago API Web App - Ingest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .document-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .document-item textarea {
+            flex: 1;
+        }
+        .document-item button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Rago API Web App - Ingest</h1>
+
+<div class="container">
+    <h2>Ingest Documents</h2>
+    <label for="ingestIndexName">Index Name:</label>
+    <input type="text" id="ingestIndexName" placeholder="Enter index name">
+    <div id="documentsContainer"></div>
+    <button onclick="addDocument()">Add Document</button>
+    <button onclick="ingestDocuments()">Ingest</button>
+    <div id="ingestResult" class="result"></div>
+</div>
+
+<div class="container">
+    <button onclick="goToCreateKnnIndex()">Go to Create kNN Index</button>
+    <button onclick="goToRetrieve()">Go to Retrieve</button>
+</div>
+
+<script>
+    const baseUrl = 'http://localhost:1323';
+
+    function addDocument() {
+        const container = document.getElementById('documentsContainer');
+        const documentItem = document.createElement('div');
+        documentItem.className = 'document-item';
+        documentItem.innerHTML = `
+            <textarea placeholder="Enter document content"></textarea>
+            <button onclick="removeDocument(this)">Remove</button>
+        `;
+        container.appendChild(documentItem);
+    }
+
+    function removeDocument(button) {
+        const documentItem = button.parentElement;
+        documentItem.remove();
+    }
+
+    async function ingestDocuments() {
+        const indexName = document.getElementById('ingestIndexName').value;
+        const documents = Array.from(document.querySelectorAll('#documentsContainer textarea')).map(textarea => textarea.value);
+        const response = await fetch(`${baseUrl}/ingest/${indexName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ documents })
+        });
+        const result = await response.json();
+        document.getElementById('ingestResult').innerText = JSON.stringify(result);
+    }
+
+    function goToCreateKnnIndex() {
+        window.location.href = 'createKnnIndex.html';
+    }
+
+    function goToRetrieve() {
+        window.location.href = 'retrieve.html';
+    }
+</script>
+</body>
+</html>
