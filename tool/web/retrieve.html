@@ -16,7 +16,7 @@
             display: block;
             margin-bottom: 5px;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -64,7 +64,7 @@
 <div class="container">
     <h2>Retrieve Documents</h2>
     <label for="retrieveIndexName">Index Name:</label>
-    <input type="text" id="retrieveIndexName" placeholder="Enter index name">
+    <select id="retrieveIndexName"></select>
     <label for="query">Query (for taking similar items from vector database):</label>
     <input type="text" id="query" placeholder="Enter query">
     <label for="message">Message (for prompting to the LLM model):</label>
@@ -81,6 +81,22 @@
 
 <script>
     const baseUrl = 'http://localhost:1323';
+
+    async function fetchIndices() {
+        try {
+            const response = await fetch(`${baseUrl}/indices`);
+            const data = await response.json();
+            const select = document.getElementById('retrieveIndexName');
+            data.indices.forEach(index => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = index;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching indices:', error);
+        }
+    }
 
     async function retrieveDocuments() {
         const indexName = document.getElementById('retrieveIndexName').value;
@@ -113,6 +129,11 @@
     function goToIngest() {
         window.location.href = 'ingest.html';
     }
+
+    // Fetch indices when the page loads
+    window.onload = function() {
+        fetchIndices();
+    };
 </script>
 </body>
 </html>

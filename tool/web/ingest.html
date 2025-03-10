@@ -16,7 +16,7 @@
             display: block;
             margin-bottom: 5px;
         }
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -76,7 +76,7 @@
 <div class="container">
     <h2>Ingest Documents</h2>
     <label for="ingestIndexName">Index Name:</label>
-    <input type="text" id="ingestIndexName" placeholder="Enter index name">
+    <select id="ingestIndexName"></select>
     <div id="documentsContainer"></div>
     <button onclick="addDocument()">Add Document</button>
     <br>
@@ -92,6 +92,22 @@
 
 <script>
     const baseUrl = 'http://localhost:1323';
+
+    async function fetchIndices() {
+        try {
+            const response = await fetch(`${baseUrl}/indices`);
+            const data = await response.json();
+            const select = document.getElementById('ingestIndexName');
+            data.indices.forEach(index => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = index;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching indices:', error);
+        }
+    }
 
     function addDocument() {
         const container = document.getElementById('documentsContainer');
@@ -146,8 +162,9 @@
         window.location.href = 'retrieve.html';
     }
 
-    // Add an empty document input field when the page loads
+    // Fetch indices when the page loads
     window.onload = function() {
+        fetchIndices();
         addDocument();
     };
 </script>
