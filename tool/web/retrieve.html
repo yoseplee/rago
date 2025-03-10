@@ -106,12 +106,11 @@
         spinner.style.display = 'block';
 
         try {
-            const response = await fetch(`${baseUrl}/retrieve/${indexName}`, {
-                method: 'POST',
+            const response = await fetch(`${baseUrl}/retrieve/${indexName}?query=${encodeURIComponent(query)}&message=${encodeURIComponent(message)}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ query, message })
+                }
             });
             const result = await response.json();
             document.getElementById('retrieveResult').innerText = JSON.stringify(result);
