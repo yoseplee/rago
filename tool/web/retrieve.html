@@ -113,9 +113,20 @@
                 }
             });
             const result = await response.json();
-            document.getElementById('retrieveResult').innerText = JSON.stringify(result);
+            let messages = '';
+
+            if (Array.isArray(result)) {
+                messages = result.map(item => item.message).join('<br>');
+            } else if (result.message) {
+                messages = result.message;
+            } else {
+                messages = 'No messages found.';
+            }
+
+            document.getElementById('retrieveResult').innerHTML = messages;
         } catch (error) {
             console.error('Error retrieving documents:', error);
+            document.getElementById('retrieveResult').innerHTML = 'Error retrieving documents.';
         } finally {
             spinner.style.display = 'none';
         }
