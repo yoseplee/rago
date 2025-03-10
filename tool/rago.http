@@ -36,6 +36,11 @@ Content-Type: application/json
     ]
 }
 
+### Listup indices
+GET localhost:1323/indices
+
+{}
+
 ### Create kNN index
 POST localhost:1323/index/knn/sim-search-yours
 

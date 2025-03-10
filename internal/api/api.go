@@ -33,3 +33,18 @@ func CreateKnnIndex(c echo.Context) error {
 	)
 	return c.JSON(http.StatusOK, CommonResponse{Message: "success"})
 }
+
+type ListIndicesResponse struct {
+	Indices []string `json:"indices"`
+}
+
+func ListIndices(c echo.Context) error {
+	indices, err := opensearch.GetClient().Indices()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, CommonResponse{Message: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, ListIndicesResponse{
+		Indices: indices,
+	})
+}

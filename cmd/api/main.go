@@ -15,6 +15,7 @@ func main() {
 
 	e.GET("/", api.GetHelloWorld)
 	e.GET("/healthCheck", api.HealthCheck)
+	e.GET("/indices", api.ListIndices)
 	e.POST("/index/knn/:indexName", api.CreateKnnIndex)
 	e.GET("/retrieve/:indexName", api.Retrieve)
 	e.POST("/ingest/:indexName", api.Ingest)

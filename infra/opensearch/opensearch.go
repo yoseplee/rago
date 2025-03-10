@@ -28,6 +28,10 @@ type IndexCreatable interface {
 	CreateKnnIndex(indexName string) error
 }
 
+type IndexListable interface {
+	Indices() ([]string, error)
+}
+
 type IndexDeletable interface {
 	DeleteIndex(indexName string) error
 }
@@ -36,6 +40,7 @@ type Client interface {
 	Indexable
 	IndexSearchable
 	IndexCreatable
+	IndexListable
 	IndexDeletable
 }
 
@@ -64,6 +69,26 @@ type DefaultClient struct {
 
 func GetClient() Client {
 	return c
+}
+
+func (dc DefaultClient) Indices() ([]string, error) {
+	indicesResponse, err := c.client.Indices.Get([]string{"*"})
+	if err != nil {
+		return nil, err
+	}
+	defer indicesResponse.Body.Close()
+
+	var jsonRes map[string]interface{}
+	if decodeErr := json.NewDecoder(indicesResponse.Body).Decode(&jsonRes); decodeErr != nil {
+		return nil, decodeErr
+	}
+
+	var result []string
+	for k, _ := range jsonRes {
+		result = append(result, k)
+	}
+
+	return result, nil
 }
 
 // Index stores document into opensearch index.
