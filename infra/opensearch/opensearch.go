@@ -85,6 +85,10 @@ func (dc DefaultClient) Indices() ([]string, error) {
 
 	var result []string
 	for k, _ := range jsonRes {
+		// skip indices which name starts with '.'
+		if k[0] == '.' {
+			continue
+		}
 		result = append(result, k)
 	}
 
