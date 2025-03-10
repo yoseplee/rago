@@ -41,6 +41,7 @@
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
+            white-space: pre-wrap;
         }
         .spinner {
             display: none;
@@ -113,23 +114,31 @@
                 }
             });
             const result = await response.json();
-            let messages = '';
+            let formattedMessage = '';
 
             if (Array.isArray(result)) {
-                messages = result.map(item => item.message).join('<br>');
+                formattedMessage = result.map(item => formatMessage(item.message)).join('<br><br>');
             } else if (result.message) {
-                messages = result.message;
+                formattedMessage = formatMessage(result.message);
             } else {
-                messages = 'No messages found.';
+                formattedMessage = 'No messages found.';
             }
 
-            document.getElementById('retrieveResult').innerHTML = messages;
+            document.getElementById('retrieveResult').innerHTML = formattedMessage;
         } catch (error) {
             console.error('Error retrieving documents:', error);
             document.getElementById('retrieveResult').innerHTML = 'Error retrieving documents.';
         } finally {
             spinner.style.display = 'none';
         }
+    }
+
+    function formatMessage(message) {
+        // Split the message into paragraphs and format lists and bold text
+        return message
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+            .replace(/(\d+)\.\s/g, '<br><strong>$1.</strong> ') // Numbered lists
+            .replace(/\n/g, '<br>'); // New lines
     }
 
     function goToCreateKnnIndex() {
