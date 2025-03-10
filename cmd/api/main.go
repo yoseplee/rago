@@ -13,6 +13,8 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORS())
 
+	e.Static("/tool/web", "tool/web")
+
 	e.GET("/", api.GetHelloWorld)
 	e.GET("/healthCheck", api.HealthCheck)
 	e.GET("/indices", api.ListIndices)
